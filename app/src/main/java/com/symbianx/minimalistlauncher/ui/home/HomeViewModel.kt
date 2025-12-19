@@ -233,4 +233,59 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             // If the intent fails, ignore silently
         }
     }
+
+    /**
+     * Opens the phone dialer app.
+     */
+    fun openPhoneDialer() {
+        try {
+            val intent = Intent(Intent.ACTION_DIAL).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            }
+            getApplication<Application>().startActivity(intent)
+        } catch (e: Exception) {
+            Toast.makeText(
+                getApplication(),
+                "Phone app not available",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    /**
+     * Opens the camera app.
+     */
+    fun openCamera() {
+        try {
+            val intent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            }
+            getApplication<Application>().startActivity(intent)
+        } catch (e: Exception) {
+            // Try alternative method - launch camera via package name
+            try {
+                val cameraIntent = getApplication<Application>().packageManager
+                    .getLaunchIntentForPackage("com.google.android.GoogleCamera")
+                    ?: getApplication<Application>().packageManager
+                        .getLaunchIntentForPackage("com.android.camera2")
+                
+                if (cameraIntent != null) {
+                    cameraIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    getApplication<Application>().startActivity(cameraIntent)
+                } else {
+                    Toast.makeText(
+                        getApplication(),
+                        "Camera app not available",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            } catch (ex: Exception) {
+                Toast.makeText(
+                    getApplication(),
+                    "Camera app not available",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
 }

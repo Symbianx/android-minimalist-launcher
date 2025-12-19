@@ -17,6 +17,13 @@
 - Q: What date format should be displayed under the time? → A: Short date with abbreviated day and month (e.g., "Thu, Dec 19")
 - Q: How should users remove apps from favorites? → A: Long-press on home screen favorite to remove it
 
+### Session 2025-12-19 (Evening)
+
+- **NEW**: Add phone button in bottom left corner to quickly open phone dialer
+- **NEW**: Add camera button in bottom right corner to quickly open camera app
+- **NEW**: Display battery indicator as circular progress ring around camera notch on Pixel 8 Pro
+- **NEW**: Fallback to standard battery percentage display on non-Pixel devices
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Quick App Launch via Search (Priority: P1)
@@ -116,6 +123,49 @@ As a user, I want to mark up to 5 apps as favorites and have them displayed on m
 5. **Given** I have a favorite on the home screen, **When** I long-press it, **Then** it is removed from favorites
 6. **Given** I have multiple favorites, **When** I view the home screen, **Then** favorites are displayed in a vertical list with text labels only
 7. **Given** I uninstall an app that is a favorite, **When** I return to home screen, **Then** that favorite is automatically removed from the list
+
+---
+
+### User Story 6 - Quick Action Buttons (Priority: P2)
+
+As a user, I want quick access buttons for the phone dialer and camera at the bottom of the home screen, so I can instantly open these essential apps without searching.
+
+**Why this priority**: Phone and camera are the most frequently used apps that need instant access. Having dedicated buttons reduces friction for these critical use cases while maintaining the minimalist interface.
+
+**Independent Test**: On the home screen, tap the phone button in the bottom left corner → Phone dialer opens. Tap the camera button in the bottom right corner → Camera app opens.
+
+**Acceptance Scenarios**:
+
+1. **Given** I am on the home screen, **When** I look at the bottom left corner, **Then** I see a phone button
+2. **Given** I am on the home screen, **When** I look at the bottom right corner, **Then** I see a camera button
+3. **Given** I am on the home screen, **When** I tap the phone button, **Then** the phone dialer app launches immediately
+4. **Given** I am on the home screen, **When** I tap the camera button, **Then** the camera app launches immediately
+5. **Given** I am in search mode, **When** I look at the bottom corners, **Then** the phone and camera buttons remain visible
+6. **Given** the phone dialer is not available on the device, **When** the home screen loads, **Then** the phone button is hidden or disabled
+7. **Given** the camera app is not available on the device, **When** the home screen loads, **Then** the camera button is hidden or disabled
+
+---
+
+### User Story 7 - Circular Battery Indicator (Priority: P3)
+
+As a Pixel 8 Pro user, I want the battery indicator to be displayed as a circular progress ring around the camera notch area, so battery status is visible while utilizing the device's unique design.
+
+**Why this priority**: This is a nice-to-have visual enhancement specific to Pixel 8 Pro that leverages the device's hardware design. The launcher will function fully without it (battery percentage text already exists), but it provides a more integrated and visually appealing experience.
+
+**Device Compatibility**: 
+- **Pixel 8 Pro**: Display circular battery indicator around the camera notch position at the top center
+- **Other devices**: Fallback to standard battery percentage display near the status bar (already implemented)
+
+**Independent Test**: On Pixel 8 Pro, open the launcher and verify a circular progress ring is visible around the camera notch area at the top, with the ring fill percentage matching the battery level. On non-Pixel devices, verify battery percentage is displayed as text.
+
+**Acceptance Scenarios**:
+
+1. **Given** I am using a Pixel 8 Pro device, **When** I view the home screen, **Then** I see a circular battery indicator around the camera notch position
+2. **Given** my battery is at 75%, **When** I view the circular indicator, **Then** the ring is 75% filled
+3. **Given** my battery level changes from 50% to 49%, **When** the change occurs, **Then** the circular indicator updates to reflect 49%
+4. **Given** I am using a non-Pixel device or emulator, **When** I view the home screen, **Then** I see the standard battery percentage text display (no circular indicator)
+5. **Given** the device has a notch/cutout in a different position than Pixel 8 Pro, **When** the home screen loads, **Then** the app gracefully falls back to standard battery display
+6. **Given** I am using a Pixel 8 Pro and battery is charging, **When** I view the circular indicator, **Then** the ring displays with a charging indication (different color or animation)
 
 ---
 
