@@ -30,13 +30,7 @@ fun CircularBatteryIndicator(
     isCharging: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val isPixel8Pro = isPixel8Pro()
-    
-    if (!isPixel8Pro) {
-        // Fallback: Don't display circular indicator on non-Pixel 8 Pro devices
-        return
-    }
-
+    // Always show the circular indicator for now (we can refine device detection later)
     val batteryColor = when {
         isCharging -> MaterialTheme.colorScheme.tertiary
         batteryPercentage > 50 -> MaterialTheme.colorScheme.primary
@@ -47,11 +41,11 @@ fun CircularBatteryIndicator(
     val backgroundColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f)
 
     Box(
-        modifier = modifier.size(48.dp),
+        modifier = modifier.size(56.dp),
         contentAlignment = Alignment.Center
     ) {
-        Canvas(modifier = Modifier.size(48.dp)) {
-            val strokeWidth = 4.dp.toPx()
+        Canvas(modifier = Modifier.size(56.dp)) {
+            val strokeWidth = 3.dp.toPx()
             val radius = (size.minDimension - strokeWidth) / 2
             val topLeft = Offset(
                 x = (size.width - radius * 2) / 2,
