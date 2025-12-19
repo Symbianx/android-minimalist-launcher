@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.symbianx.minimalistlauncher.ui.home.components.FavoritesList
 import com.symbianx.minimalistlauncher.ui.home.components.GestureHandler
+import com.symbianx.minimalistlauncher.ui.home.components.QuickActionButtons
 import com.symbianx.minimalistlauncher.ui.home.components.SearchView
 import com.symbianx.minimalistlauncher.ui.home.components.StatusBar
 
@@ -63,6 +64,13 @@ fun HomeScreen(
                         modifier = Modifier
                             .align(Alignment.Center)
                             .padding(top = 200.dp) // Adjust based on status bar height
+                    )
+                    
+                    // Quick action buttons at bottom
+                    QuickActionButtons(
+                        onPhoneClick = { viewModel.openPhoneDialer() },
+                        onCameraClick = { viewModel.openCamera() },
+                        modifier = Modifier.align(Alignment.BottomCenter)
                     )
                 }
             }
