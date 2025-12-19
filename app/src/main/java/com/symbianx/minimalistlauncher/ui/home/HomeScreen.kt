@@ -2,6 +2,7 @@ package com.symbianx.minimalistlauncher.ui.home
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -12,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.symbianx.minimalistlauncher.ui.home.components.CircularBatteryIndicator
 import com.symbianx.minimalistlauncher.ui.home.components.FavoritesList
 import com.symbianx.minimalistlauncher.ui.home.components.GestureHandler
 import com.symbianx.minimalistlauncher.ui.home.components.QuickActionButtons
@@ -46,14 +48,23 @@ fun HomeScreen(
                 modifier = Modifier.fillMaxSize()
             ) {
                 if (!searchState.isActive) {
-                    // Status bar at top
+                    // Circular battery indicator at absolute top center (around notch)
+                    CircularBatteryIndicator(
+                        batteryPercentage = deviceStatus.batteryPercentage,
+                        isCharging = deviceStatus.isCharging,
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .offset(y = 8.dp)
+                    )
+                    
+                    // Status bar below circular indicator
                     StatusBar(
                         deviceStatus = deviceStatus,
                         nowPlayingInfo = nowPlayingInfo,
                         onNowPlayingClick = { viewModel.openNowPlayingHistory() },
                         modifier = Modifier
                             .align(Alignment.TopCenter)
-                            .padding(top = 32.dp)
+                            .padding(top = 80.dp)
                     )
                     
                     // Favorites list below status bar

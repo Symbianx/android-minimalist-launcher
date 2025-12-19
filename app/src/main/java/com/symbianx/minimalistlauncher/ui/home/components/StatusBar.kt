@@ -40,13 +40,7 @@ fun StatusBar(
         verticalArrangement = Arrangement.spacedBy(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Circular battery indicator (Pixel 8 Pro only, invisible on other devices)
-        CircularBatteryIndicator(
-            batteryPercentage = deviceStatus.batteryPercentage,
-            isCharging = deviceStatus.isCharging
-        )
-        
-        // Battery percentage text (always visible as fallback)
+        // Battery percentage text
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
