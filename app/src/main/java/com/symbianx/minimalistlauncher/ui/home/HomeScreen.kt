@@ -19,6 +19,7 @@ import com.symbianx.minimalistlauncher.ui.home.components.GestureHandler
 import com.symbianx.minimalistlauncher.ui.home.components.QuickActionButtons
 import com.symbianx.minimalistlauncher.ui.home.components.SearchView
 import com.symbianx.minimalistlauncher.ui.home.components.StatusBar
+import com.symbianx.minimalistlauncher.ui.home.components.isPixel8Pro
 
 /**
  * Main home screen composable for the minimalist launcher.
@@ -48,15 +49,16 @@ fun HomeScreen(
                 modifier = Modifier.fillMaxSize()
             ) {
                 if (!searchState.isActive) {
-                    // Circular battery indicator at absolute top center (around notch)
-                    CircularBatteryIndicator(
-                        batteryPercentage = deviceStatus.batteryPercentage,
-                        isCharging = deviceStatus.isCharging,
-                        modifier = Modifier
-                            .align(Alignment.TopCenter)
-                            .offset(y = 8.dp)
-                    )
-                    
+                    if (isPixel8Pro()) {
+                        // Circular battery indicator at absolute top center (around notch)
+                        CircularBatteryIndicator(
+                            batteryPercentage = deviceStatus.batteryPercentage,
+                            isCharging = deviceStatus.isCharging,
+                            modifier = Modifier
+                                .align(Alignment.TopCenter)
+                                .offset(y = 8.dp)
+                        )
+                    }
                     // Status bar below circular indicator
                     StatusBar(
                         deviceStatus = deviceStatus,
@@ -66,7 +68,7 @@ fun HomeScreen(
                             .align(Alignment.TopCenter)
                             .padding(top = 80.dp)
                     )
-                    
+
                     // Favorites list below status bar
                     FavoritesList(
                         favorites = favorites,
@@ -76,7 +78,7 @@ fun HomeScreen(
                             .align(Alignment.Center)
                             .padding(top = 200.dp) // Adjust based on status bar height
                     )
-                    
+
                     // Quick action buttons at bottom
                     QuickActionButtons(
                         onPhoneClick = { viewModel.openPhoneDialer() },
