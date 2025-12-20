@@ -24,6 +24,16 @@
 - **NEW**: Display battery indicator as circular progress ring around camera notch on Pixel 8 Pro
 - **NEW**: Fallback to standard battery percentage display on non-Pixel devices
 
+### Session 2025-12-20 (Early Morning)
+
+- **NEW**: Hide status bar completely for true immersive full-screen experience
+- **NEW**: Reduce swipe travel distance from 100dp to 50dp for faster search activation
+- **NEW**: Swipe up from bottom opens device search (Google Search/Assistant)
+- **NEW**: Swipe down (pull down gesture from anywhere) opens notification panel
+- **NEW**: Battery indicator only shows when battery is under 50%
+- **NEW**: Battery indicator changes color: green above 20%, orange at 20%, red at 10%
+- **NEW**: On Pixel 8 Pro, battery text should not show (circular indicator only)
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Quick App Launch via Search (Priority: P1)
@@ -169,6 +179,73 @@ As a Pixel 8 Pro user, I want the battery indicator to be displayed as a circula
 
 ---
 
+### User Story 8 - Multi-Directional Gesture System (Priority: P1)
+
+As a user, I want to use intuitive swipe gestures to access different features, so I can quickly navigate the launcher and access device functions without tapping buttons.
+
+**Why this priority**: Core interaction model for the launcher. Gestures are faster than buttons and support the minimalist design by reducing UI elements. This is P1 because the primary app search requires the right-to-left swipe gesture.
+
+**Independent Test**: From home screen, perform right-to-left swipe → app search opens. Perform pull-down gesture → notification panel opens. Perform swipe-up gesture → device search opens. All gestures should be responsive with a 50dp threshold.
+
+**Acceptance Scenarios**:
+
+1. **Given** I am on the home screen, **When** I swipe right-to-left at least 50dp, **Then** the app search activates with keyboard shown
+2. **Given** I am on the home screen, **When** I pull down (swipe downward) from anywhere on screen at least 50dp, **Then** the Android notification panel opens
+3. **Given** I am on the home screen, **When** I swipe up from anywhere on screen at least 50dp, **Then** the device search (Google Search/Assistant) opens
+4. **Given** I perform a diagonal swipe, **When** the gesture completes, **Then** the predominant direction (horizontal vs vertical) determines which action triggers
+5. **Given** I swipe less than 50dp in any direction, **When** the gesture ends, **Then** no action is triggered
+6. **Given** the status bar is hidden, **When** I swipe down from the very top edge, **Then** the status bar appears temporarily (standard Android behavior)
+7. **Given** I am in app search mode, **When** I press back button, **Then** search dismisses and I return to home screen
+8. **Given** device search is not available, **When** I swipe up, **Then** the gesture fails gracefully with no action
+9. **Given** I perform multiple quick swipes in different directions, **When** each gesture completes, **Then** each action triggers independently without interference
+
+---
+
+### User Story 9 - Immersive Full-Screen Experience (Priority: P2)
+
+As a user, I want the launcher to use the entire screen without status bar clutter, so I have a clean, distraction-free home screen that maximizes usable space.
+
+**Why this priority**: Enhances the minimalist aesthetic and provides more screen real estate. The launcher functions without this (P1 gestures work either way), but it significantly improves the visual experience and aligns with the minimalist design goals.
+
+**Independent Test**: Open the launcher and verify no status bar is visible at the top. The time, date, and battery indicator should be part of the launcher UI, not the system status bar. Swipe down from the very top edge → status bar appears temporarily, then hides again.
+
+**Acceptance Scenarios**:
+
+1. **Given** I am on the home screen, **When** I look at the top of the screen, **Then** I see no system status bar (time, battery, icons)
+2. **Given** the launcher is active, **When** I swipe down from the very top edge, **Then** the status bar appears temporarily as a transient overlay
+3. **Given** the status bar is temporarily visible, **When** I tap anywhere or wait a few seconds, **Then** the status bar auto-hides
+4. **Given** I press home button from any app, **When** the launcher appears, **Then** the status bar immediately hides (no animation delay)
+5. **Given** I am using the launcher, **When** I view the screen, **Then** the launcher content extends to the very top of the display (edge-to-edge)
+
+---
+
+### User Story 10 - Smart Battery Indicator (Priority: P3)
+
+As a user, I want the battery indicator to only appear when my battery is below 50% and change colors based on urgency, so I'm not constantly distracted by battery status when it's not critical.
+
+**Why this priority**: Reduces visual clutter while still providing important warnings when battery is low. The launcher works fully without this (battery info can always be accessed via notification panel), but it supports the minimalist goal by showing only essential information.
+
+**Device Compatibility**:
+- **Pixel 8 Pro**: Circular battery indicator around camera notch (no text), appears below 50%
+- **Other devices**: Standard battery percentage text display near top, appears below 50%
+
+**Independent Test**: Set battery to 60% → no battery indicator visible. Set battery to 40% → green circular indicator (Pixel 8 Pro) or text (other devices) appears. Set battery to 15% → indicator turns orange. Set battery to 8% → indicator turns red.
+
+**Acceptance Scenarios**:
+
+1. **Given** my battery is at 60% or above, **When** I view the home screen, **Then** no battery indicator is visible
+2. **Given** my battery drops to 49%, **When** I view the home screen, **Then** a green battery indicator appears
+3. **Given** my battery is between 50% and 21%, **When** I view the home screen, **Then** the battery indicator displays in green
+4. **Given** my battery drops to 20%, **When** I view the home screen, **Then** the battery indicator changes to orange
+5. **Given** my battery is between 20% and 11%, **When** I view the home screen, **Then** the battery indicator displays in orange
+6. **Given** my battery drops to 10%, **When** I view the home screen, **Then** the battery indicator changes to red
+7. **Given** my battery is at or below 10%, **When** I view the home screen, **Then** the battery indicator displays in red
+8. **Given** I am using a Pixel 8 Pro, **When** the battery indicator is visible, **Then** I see only the circular progress ring (no percentage text)
+9. **Given** I am using a non-Pixel device, **When** the battery indicator is visible, **Then** I see the battery percentage as text
+10. **Given** my battery is charging at 30%, **When** I view the home screen, **Then** the battery indicator still appears (charging status doesn't affect visibility threshold)
+
+---
+
 ### Edge Cases
 
 - What happens when no apps are installed (fresh device state)?
@@ -235,6 +312,20 @@ As a Pixel 8 Pro user, I want the battery indicator to be displayed as a circula
 - **FR-035**: Favorites MUST persist across app restarts and device reboots
 - **FR-036**: When a favorite app is uninstalled, it MUST be automatically removed from the favorites list
 - **FR-037**: When attempting to add a 6th favorite, the launcher MUST show a "Maximum 5 favorites allowed" message or replace the oldest favorite
+- **FR-038**: Launcher MUST hide the system status bar for full immersive edge-to-edge display
+- **FR-039**: Launcher MUST support swipe-down gesture (pull down) from anywhere on screen to open notification panel
+- **FR-040**: Launcher MUST support swipe-up gesture from anywhere on screen to open device search (Google Search/Assistant)
+- **FR-041**: All swipe gestures MUST use a 50dp threshold for activation (reduced from 100dp for faster responsiveness)
+- **FR-042**: Swipe gesture detection MUST determine action based on predominant direction (horizontal vs vertical with greater absolute distance)
+- **FR-043**: Battery indicator MUST only display when battery level is below 50%
+- **FR-044**: Battery indicator MUST display in green when battery is between 21% and 50%
+- **FR-045**: Battery indicator MUST display in orange when battery is between 11% and 20%
+- **FR-046**: Battery indicator MUST display in red when battery is at or below 10%
+- **FR-047**: On Pixel 8 Pro, battery indicator MUST be circular progress ring only (no percentage text)
+- **FR-048**: On non-Pixel devices, battery indicator MUST be percentage text when battery is below 50%
+- **FR-049**: Launcher MUST request EXPAND_STATUS_BAR permission for notification panel gesture
+- **FR-050**: Swipe-up gesture MUST gracefully fail with no action if device search is unavailable
+- **FR-051**: Status bar MUST auto-hide after appearing as transient overlay from top-edge swipe
 
 ### Key Entities
 
@@ -243,7 +334,12 @@ As a Pixel 8 Pro user, I want the battery indicator to be displayed as a circula
 - **Device Status**: Represents current time, date, and battery level for home screen display
 - **Now Playing Info**: Represents currently detected song information (song name, artist) from Pixel's ambient music recognition
 - **Search Query**: User's text input used to filter the app list
-- **Swipe Gesture**: Right-to-left swipe action that activates search mode
+- **Swipe Gesture**: Multi-directional gesture system supporting:
+  - Right-to-left: Activate app search
+  - Pull down (top-to-bottom from anywhere): Open notification panel
+  - Swipe up (bottom-to-top from anywhere): Open device search
+  - 50dp threshold for all gestures
+- **Battery Indicator**: Visual battery status that only appears below 50% with color coding (green 21-50%, orange 11-20%, red ≤10%)
 
 ## Success Criteria *(mandatory)*
 
@@ -261,10 +357,16 @@ As a Pixel 8 Pro user, I want the battery indicator to be displayed as a circula
 - **SC-010**: Users report reduced phone usage time compared to feature-rich launchers (qualitative feedback)
 - **SC-011**: Favorite apps launch in under 200ms from home screen tap
 - **SC-012**: Users can add/remove favorites with no more than 2 gestures (long-press + confirm if needed)
+- **SC-013**: All swipe gestures (right-to-left, pull-down, swipe-up) activate within 50dp of travel distance
+- **SC-014**: Gesture direction detection accuracy is above 95% (correctly distinguishes horizontal vs vertical swipes)
+- **SC-015**: Status bar remains hidden during normal launcher usage (only appears on explicit top-edge swipe)
+- **SC-016**: Battery indicator color changes are immediate and accurate at threshold boundaries (20%, 10%)
+- **SC-017**: Notification panel opens within 300ms of pull-down gesture completion
+- **SC-018**: Device search opens within 300ms of swipe-up gesture completion
 
 ### Constitution Compliance *(mandatory)*
 
-- **Performance**: Launcher maintains 120 FPS on 120Hz displays (8.3ms per frame), memory footprint under 30MB, cold start under 500ms, total APK size under 5MB
-- **Testing**: 100% of user stories have integration tests, 80%+ code coverage for business logic (app filtering, search, swipe gesture recognition, favorites management, now playing data access, launcher registration)
-- **UX Consistency**: Follows Material Design 3 for text input and typography, supports dark/light themes with high contrast text, all interactions (including swipe gesture and long-press) provide immediate visual feedback, search result items minimum 64dp touch target height, status information positioned at top of screen, now playing display integrates seamlessly with minimal design
+- **Performance**: Launcher maintains 120 FPS on 120Hz displays (8.3ms per frame), memory footprint under 30MB, cold start under 500ms, total APK size under 5MB, gesture recognition under 50ms
+- **Testing**: 100% of user stories have integration tests, 80%+ code coverage for business logic (app filtering, search, multi-directional gesture recognition, favorites management, now playing data access, launcher registration, battery indicator logic)
+- **UX Consistency**: Follows Material Design 3 for text input and typography, supports dark/light themes with high contrast text, all interactions (including multi-directional swipe gestures and long-press) provide immediate visual feedback, search result items minimum 64dp touch target height, status information positioned at top of screen, now playing display integrates seamlessly with minimal design, immersive full-screen edge-to-edge display with hidden status bar, battery indicator color coding (green/orange/red) is clear and accessible
 - **Quality**: Zero linting violations (ktlint), all public APIs documented with KDoc, minimal dependencies (Android SDK only, Pixel "Now Playing" API access, no third-party libraries unless justified)
