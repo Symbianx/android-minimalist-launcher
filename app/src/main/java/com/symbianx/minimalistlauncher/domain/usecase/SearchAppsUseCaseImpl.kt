@@ -12,7 +12,7 @@ class SearchAppsUseCaseImpl : SearchAppsUseCase {
         query: String,
     ): List<App> {
         if (query.isBlank()) {
-            return emptyList()
+            return apps.sortedBy { it.label.lowercase(Locale.getDefault()) }
         }
 
         val normalizedQuery = query.trim().lowercase(Locale.getDefault())
