@@ -9,14 +9,11 @@ import com.symbianx.minimalistlauncher.data.local.FavoritesDataSourceImpl
 import com.symbianx.minimalistlauncher.data.repository.AppRepositoryImpl
 import com.symbianx.minimalistlauncher.data.repository.DeviceStatusRepositoryImpl
 import com.symbianx.minimalistlauncher.data.repository.FavoritesRepositoryImpl
-import com.symbianx.minimalistlauncher.data.repository.NowPlayingRepositoryImpl
 import com.symbianx.minimalistlauncher.data.system.AppListDataSourceImpl
 import com.symbianx.minimalistlauncher.data.system.BatteryDataSourceImpl
-import com.symbianx.minimalistlauncher.data.system.NowPlayingDataSourceImpl
 import com.symbianx.minimalistlauncher.domain.model.App
 import com.symbianx.minimalistlauncher.domain.model.DeviceStatus
 import com.symbianx.minimalistlauncher.domain.model.FavoriteApp
-import com.symbianx.minimalistlauncher.domain.model.NowPlayingInfo
 import com.symbianx.minimalistlauncher.domain.model.SearchState
 import com.symbianx.minimalistlauncher.domain.usecase.LaunchAppUseCaseImpl
 import com.symbianx.minimalistlauncher.domain.usecase.ManageFavoritesUseCase
@@ -42,10 +39,6 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     
     private val deviceStatusRepository = DeviceStatusRepositoryImpl(
         BatteryDataSourceImpl(application.applicationContext)
-    )
-    
-    private val nowPlayingRepository = NowPlayingRepositoryImpl(
-        NowPlayingDataSourceImpl(application.applicationContext)
     )
     
     private val favoritesRepository = FavoritesRepositoryImpl(
@@ -96,13 +89,6 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = DeviceStatus(currentTime = "", currentDate = "", batteryPercentage = 0)
-        )
-
-    val nowPlayingInfo: StateFlow<NowPlayingInfo> = nowPlayingRepository.observeNowPlaying()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = NowPlayingInfo()
         )
 
     val favorites: StateFlow<List<FavoriteApp>> = manageFavoritesUseCase.observeFavorites()
@@ -216,21 +202,6 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                 "Removed from favorites",
                 Toast.LENGTH_SHORT
             ).show()
-        }
-    }
-
-    /**
-     * Opens the Now Playing history activity.
-     */
-    fun openNowPlayingHistory() {
-        try {
-            val intent = Intent().apply {
-                action = "com.google.intelligence.sense.NOW_PLAYING_HISTORY"
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            }
-            getApplication<Application>().startActivity(intent)
-        } catch (e: Exception) {
-            // If the intent fails, ignore silently
         }
     }
 

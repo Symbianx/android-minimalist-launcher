@@ -7,11 +7,9 @@ import androidx.compose.runtime.Immutable
  *
  * @property searchState Current search state
  * @property deviceStatus Current device status
- * @property nowPlayingInfo Current now playing information
  */
 @Immutable
 data class LauncherState(
     val searchState: SearchState = SearchState(),
-    val deviceStatus: DeviceStatus = DeviceStatus(currentTime = "", currentDate = "", batteryPercentage = 0),
-    val nowPlayingInfo: NowPlayingInfo = NowPlayingInfo()
+    val deviceStatus: DeviceStatus = DeviceStatus(currentTime = "", currentDate = "", batteryPercentage = 0)
 )

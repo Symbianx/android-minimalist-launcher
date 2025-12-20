@@ -156,37 +156,47 @@ searchQuery.debounce(100).mapLatest { query ->
 
 ### 6. Pixel Now Playing Integration
 
-**Decision**: Access via `MediaStore.Audio.Media` ContentProvider with ambient music content URI
+**Decision**: Access via NotificationListenerService to read Now Playing notifications
 
 **Rationale**:
-- Pixel's "Now Playing" stores detected songs in system database
-- Accessible via ContentProvider without special permissions
-- Updates automatically when new songs detected
-- Can register ContentObserver for live updates
-
-**Content URI**: `content://com.google.android.as/ambient_music_tracks`
+- Pixel's "Now Playing" displays detected songs as a notification from com.google.android.as
+- The notification contains song and artist in the title field formatted as "Song Name by Artist Name"
+- NotificationListenerService provides real-time updates when songs are detected
+- No content provider access is available or needed
+- Requires user to grant notification access permission
 
 **Implementation Strategy**:
-1. Query ContentProvider for latest track
-2. Register ContentObserver for automatic updates
-3. Extract song name and artist from cursor
-4. Handle cases where feature is disabled (empty cursor)
-5. Graceful degradation on non-Pixel devices
+1. Create NotificationListenerService to listen for notifications from com.google.android.as
+2. Filter for notification ID 123 (the Now Playing notification)
+3. Extract title from notification extras which contains "Song Name by Artist Name"
+4. Parse the title to separate song name and artist
+5. Emit updates via StateFlow for reactive UI updates
+6. Handle cases where notification is removed (no music detected)
 
-**Fallback Strategy**:
-- Check if ContentProvider exists before querying
-- Display empty state if unavailable
-- No crash on non-Pixel devices
-
-**Tap Action**: Launch Now Playing history via:
-```kotlin
-Intent("com.google.intelligence.sense.NOW_PLAYING_HISTORY")
-    .setPackage("com.google.android.googlequicksearchbox")
+**Notification Structure**:
+```
+Package: com.google.android.as
+ID: 123
+Extras:
+  - android.title: "Song Name by Artist Name"
+  - android.text: "Tap to see your song history"
+  - android.substName: "Now Playing"
 ```
 
+**Permission Required**:
+- BIND_NOTIFICATION_LISTENER_SERVICE (declared in AndroidManifest)
+- User must manually enable notification access in system settings:
+  Settings > Apps > Special app access > Notification access
+
+**Fallback Strategy**:
+- Check if NotificationListenerService is enabled
+- Display unavailable state if permission not granted
+- No crash on non-Pixel devices
+- Gracefully handle missing notifications
+
 **Alternatives Considered**:
+- Content provider (content://com.google.android.as): Rejected, provider does not exist or is not queryable
 - Media session API: Rejected, only for actively playing media
-- Notification listener: Rejected, requires special permission
 - Third-party Shazam API: Rejected, doesn't access Pixel's local data
 
 ### 7. Status Display (Time & Battery)
