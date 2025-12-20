@@ -20,7 +20,7 @@ import kotlin.math.abs
  * Detects swipe gestures to trigger different actions:
  * - Right-to-left: Activate search
  * - Bottom-up: Open device search
- * - Top-down: Open notification panel
+ * - Top-down (pull down): Open notification panel (works from anywhere on screen)
  *
  * @param onSwipeRightToLeft Callback when right-to-left swipe is detected
  * @param modifier Modifier for the gesture detector
@@ -67,8 +67,8 @@ fun GestureHandler(
                             if (totalDragY < -swipeThreshold) {
                                 // Bottom to top swipe - open device search
                                 openDeviceSearch(context)
-                            } else if (totalDragY > swipeThreshold && dragStartY < 100f) {
-                                // Top to bottom swipe (starting from top) - open notifications
+                            } else if (totalDragY > swipeThreshold) {
+                                // Top to bottom swipe (pull down) - open notifications
                                 openNotificationPanel(context)
                             }
                         }
