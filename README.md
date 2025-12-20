@@ -2,6 +2,8 @@
 
 A distraction-free Android launcher focused on simplicity and essential interactions. Built entirely using [github/spec-kit](https://github.com/github/spec-kit) to explore spec-driven development with Android/Kotlin.
 
+<img src="./screenshots/screenshot.png" alt="screenshot-of-the-launcher" width="300"/>
+
 ## Features
 
 - **Clean Home Screen**: Displays only time, date, and favorite apps
