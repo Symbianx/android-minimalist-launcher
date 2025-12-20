@@ -18,7 +18,9 @@ import androidx.core.view.WindowCompat
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
     secondary = PurpleGrey80,
-    tertiary = Pink80
+    tertiary = Pink80,
+    background = Black,
+    surface = Black
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -47,7 +49,13 @@ fun MinimalistLauncherTheme(
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+            val baseScheme = if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+            // Override background to pure black for minimalist launcher
+            if (darkTheme) {
+                baseScheme.copy(background = Black, surface = Black)
+            } else {
+                baseScheme
+            }
         }
 
         darkTheme -> DarkColorScheme
@@ -57,8 +65,8 @@ fun MinimalistLauncherTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+            window.statusBarColor = Black.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
         }
     }
 
