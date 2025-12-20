@@ -1,5 +1,6 @@
 package com.symbianx.minimalistlauncher.ui.home
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
@@ -36,6 +37,11 @@ fun HomeScreen(
     val deviceStatus by viewModel.deviceStatus.collectAsState()
     val nowPlayingInfo by viewModel.nowPlayingInfo.collectAsState()
     val favorites by viewModel.favorites.collectAsState()
+
+    // Handle back button press when search is active
+    BackHandler(enabled = searchState.isActive) {
+        viewModel.deactivateSearch()
+    }
 
     Surface(
         modifier = modifier.fillMaxSize(),
