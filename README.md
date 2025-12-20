@@ -23,10 +23,11 @@ The goal of this project was to experience spec driven development with:
 * A stack I've never been profecient with (Mobile);
 
 
+
 ## Future features
 
-- **Auto-Launch**: Automatically open app when search returns single result
 - **Dynamic Backgrounds**: Automatic background generation (exploring generative art)
 - **UI Polish**: Animation refinements and micro-interactions
   - swiping back from left to right in the search screen should return to the home
 - **Clock Quick Access**: Pressing the time/date area should open the built in alarm app for quick access to alerts
+- **Settings Menu**: Toggle auto-launch and other preferences

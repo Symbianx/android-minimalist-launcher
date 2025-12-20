@@ -27,11 +27,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.symbianx.minimalistlauncher.domain.model.App
 import com.symbianx.minimalistlauncher.domain.model.SearchState
+import com.symbianx.minimalistlauncher.domain.usecase.AutoLaunchDecider
+import kotlinx.coroutines.delay
 
 /**
  * Search view with text input and results display.
@@ -50,6 +54,8 @@ fun SearchView(
     onQueryChange: (String) -> Unit,
     onAppClick: (App) -> Unit,
     onAppLongPress: (App) -> Unit = {},
+    autoLaunchEnabled: Boolean = true,
+    autoLaunchDelayMs: Long = 300,
 ) {
     val focusRequester = remember { FocusRequester() }
 
@@ -59,6 +65,7 @@ fun SearchView(
         exit = fadeOut() + slideOutVertically(),
         modifier = modifier,
     ) {
+        val haptic = LocalHapticFeedback.current
         Column(
             modifier =
                 Modifier
@@ -130,6 +137,21 @@ fun SearchView(
         LaunchedEffect(searchState.isActive) {
             if (searchState.isActive) {
                 focusRequester.requestFocus()
+            }
+        }
+
+        // Auto-Launch: when exactly one result and user pauses typing, launch it
+        LaunchedEffect(searchState.query, searchState.results.size, searchState.isActive, autoLaunchEnabled, autoLaunchDelayMs) {
+            val hasSingle = AutoLaunchDecider.isEligible(autoLaunchEnabled, searchState)
+            if (hasSingle) {
+                // Debounce: wait briefly to ensure user paused input
+                delay(autoLaunchDelayMs)
+                // Re-check single result after debounce
+                if (AutoLaunchDecider.isEligible(autoLaunchEnabled, searchState)) {
+                    // Provide brief haptic feedback before launching
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                    onAppClick(searchState.results.first())
+                }
             }
         }
     }
