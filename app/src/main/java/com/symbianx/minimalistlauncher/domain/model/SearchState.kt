@@ -13,5 +13,5 @@ import androidx.compose.runtime.Immutable
 data class SearchState(
     val isActive: Boolean = false,
     val query: String = "",
-    val results: List<App> = emptyList()
+    val results: List<App> = emptyList(),
 )

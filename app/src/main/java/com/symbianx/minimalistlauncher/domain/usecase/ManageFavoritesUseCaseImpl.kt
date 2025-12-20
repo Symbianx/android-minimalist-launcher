@@ -9,9 +9,8 @@ import kotlinx.coroutines.flow.Flow
  * Implementation of [ManageFavoritesUseCase].
  */
 class ManageFavoritesUseCaseImpl(
-    private val favoritesRepository: FavoritesRepository
+    private val favoritesRepository: FavoritesRepository,
 ) : ManageFavoritesUseCase {
-
     override fun observeFavorites(): Flow<List<FavoriteApp>> {
         return favoritesRepository.observeFavorites()
     }

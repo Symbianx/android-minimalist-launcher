@@ -10,6 +10,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.symbianx.minimalistlauncher.domain.model.DeviceStatus
 
@@ -22,48 +24,58 @@ import com.symbianx.minimalistlauncher.domain.model.DeviceStatus
 @Composable
 fun StatusBar(
     deviceStatus: DeviceStatus,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(16.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         // Battery percentage text - only show on non-Pixel 8 Pro devices
         if (!isPixel8Pro()) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     text = "${deviceStatus.batteryPercentage}%",
                     style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+                    modifier = Modifier.semantics {
+                        contentDescription = "Battery percentage"
+                    },
                 )
-                
+
                 if (deviceStatus.isCharging) {
                     Text(
                         text = "⚡",
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyLarge,
                     )
                 }
             }
         }
-        
+
         // Time in the middle
         Text(
             text = deviceStatus.currentTime,
             style = MaterialTheme.typography.displayLarge,
-            color = MaterialTheme.colorScheme.onBackground
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier.semantics {
+                contentDescription = "Current time"
+            },
         )
-        
+
         // Date BELOW time
         Text(
             text = deviceStatus.currentDate,
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
+            modifier = Modifier.semantics {
+                contentDescription = "Current date"
+            },
         )
     }
 }

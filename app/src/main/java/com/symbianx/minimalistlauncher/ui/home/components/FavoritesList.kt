@@ -30,33 +30,35 @@ fun FavoritesList(
     favorites: List<FavoriteApp>,
     onFavoriteClick: (FavoriteApp) -> Unit,
     onFavoriteLongPress: (FavoriteApp) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     if (favorites.isEmpty()) {
         return
     }
 
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         favorites.sortedBy { it.position }.forEach { favorite ->
             Text(
                 text = favorite.label,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .combinedClickable(
-                        onClick = { onFavoriteClick(favorite) },
-                        onLongClick = { onFavoriteLongPress(favorite) },
-                        indication = null,
-                        interactionSource = remember { MutableInteractionSource() }
-                    )
-                    .padding(vertical = 20.dp, horizontal = 8.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .combinedClickable(
+                            onClick = { onFavoriteClick(favorite) },
+                            onLongClick = { onFavoriteLongPress(favorite) },
+                            indication = null,
+                            interactionSource = remember { MutableInteractionSource() },
+                        )
+                        .padding(vertical = 20.dp, horizontal = 8.dp),
                 style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.onBackground
+                color = MaterialTheme.colorScheme.onBackground,
             )
         }
     }

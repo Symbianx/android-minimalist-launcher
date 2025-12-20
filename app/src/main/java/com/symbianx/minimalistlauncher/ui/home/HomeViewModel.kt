@@ -22,81 +22,86 @@ import com.symbianx.minimalistlauncher.domain.usecase.SearchAppsUseCaseImpl
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /**
  * ViewModel for the home screen, managing app search and launch functionality.
  */
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
+    private val appRepository =
+        AppRepositoryImpl(
+            AppListDataSourceImpl(application.applicationContext),
+        )
 
-    private val appRepository = AppRepositoryImpl(
-        AppListDataSourceImpl(application.applicationContext)
-    )
-    
-    private val deviceStatusRepository = DeviceStatusRepositoryImpl(
-        BatteryDataSourceImpl(application.applicationContext)
-    )
-    
-    private val favoritesRepository = FavoritesRepositoryImpl(
-        FavoritesDataSourceImpl(application.applicationContext)
-    ).also {
-        // Initialize favorites repository
-        viewModelScope.launch {
-            it.initialize()
+    private val deviceStatusRepository =
+        DeviceStatusRepositoryImpl(
+            BatteryDataSourceImpl(application.applicationContext),
+        )
+
+    private val favoritesRepository =
+        FavoritesRepositoryImpl(
+            FavoritesDataSourceImpl(application.applicationContext),
+        ).also {
+            // Initialize favorites repository
+            viewModelScope.launch {
+                it.initialize()
+            }
         }
-    }
-    
+
     private val searchAppsUseCase = SearchAppsUseCaseImpl()
     private val launchAppUseCase = LaunchAppUseCaseImpl(application.applicationContext)
     private val manageFavoritesUseCase: ManageFavoritesUseCase = ManageFavoritesUseCaseImpl(favoritesRepository)
 
     private val _searchQuery = MutableStateFlow("")
     private val _isSearchActive = MutableStateFlow(false)
-    
-    private val allApps: StateFlow<List<App>> = appRepository.getApps()
-        .stateIn(
+
+    private val allApps: StateFlow<List<App>> =
+        appRepository.getApps()
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = emptyList(),
+            )
+
+    val searchState: StateFlow<SearchState> =
+        combine(
+            _isSearchActive,
+            _searchQuery,
+            allApps,
+        ) { isActive, query, apps ->
+            SearchState(
+                isActive = isActive,
+                query = query,
+                results =
+                    if (isActive && query.isNotBlank()) {
+                        searchAppsUseCase.execute(apps, query)
+                    } else {
+                        emptyList()
+                    },
+            )
+        }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptyList()
+            initialValue = SearchState(),
         )
 
-    val searchState: StateFlow<SearchState> = combine(
-        _isSearchActive,
-        _searchQuery,
-        allApps
-    ) { isActive, query, apps ->
-        SearchState(
-            isActive = isActive,
-            query = query,
-            results = if (isActive && query.isNotBlank()) {
-                searchAppsUseCase.execute(apps, query)
-            } else {
-                emptyList()
-            }
-        )
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = SearchState()
-    )
+    val deviceStatus: StateFlow<DeviceStatus> =
+        deviceStatusRepository.observeDeviceStatus()
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = DeviceStatus(currentTime = "", currentDate = "", batteryPercentage = 0),
+            )
 
-    val deviceStatus: StateFlow<DeviceStatus> = deviceStatusRepository.observeDeviceStatus()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = DeviceStatus(currentTime = "", currentDate = "", batteryPercentage = 0)
-        )
-
-    val favorites: StateFlow<List<FavoriteApp>> = manageFavoritesUseCase.observeFavorites()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptyList()
-        )
+    val favorites: StateFlow<List<FavoriteApp>> =
+        manageFavoritesUseCase.observeFavorites()
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = emptyList(),
+            )
 
     // Validate favorites when app list changes
     init {
@@ -163,28 +168,28 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                     Toast.makeText(
                         getApplication(),
                         "Added to favorites",
-                        Toast.LENGTH_SHORT
+                        Toast.LENGTH_SHORT,
                     ).show()
                 }
                 is ManageFavoritesUseCase.AddFavoriteResult.AlreadyExists -> {
                     Toast.makeText(
                         getApplication(),
                         "Already in favorites",
-                        Toast.LENGTH_SHORT
+                        Toast.LENGTH_SHORT,
                     ).show()
                 }
                 is ManageFavoritesUseCase.AddFavoriteResult.LimitReached -> {
                     Toast.makeText(
                         getApplication(),
                         "Maximum 5 favorites allowed",
-                        Toast.LENGTH_SHORT
+                        Toast.LENGTH_SHORT,
                     ).show()
                 }
                 is ManageFavoritesUseCase.AddFavoriteResult.Error -> {
                     Toast.makeText(
                         getApplication(),
                         "Failed to add favorite",
-                        Toast.LENGTH_SHORT
+                        Toast.LENGTH_SHORT,
                     ).show()
                 }
             }
@@ -200,7 +205,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             Toast.makeText(
                 getApplication(),
                 "Removed from favorites",
-                Toast.LENGTH_SHORT
+                Toast.LENGTH_SHORT,
             ).show()
         }
     }
@@ -210,15 +215,16 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
      */
     fun openPhoneDialer() {
         try {
-            val intent = Intent(Intent.ACTION_DIAL).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            }
+            val intent =
+                Intent(Intent.ACTION_DIAL).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                }
             getApplication<Application>().startActivity(intent)
         } catch (e: Exception) {
             Toast.makeText(
                 getApplication(),
                 "Phone app not available",
-                Toast.LENGTH_SHORT
+                Toast.LENGTH_SHORT,
             ).show()
         }
     }
@@ -228,18 +234,20 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
      */
     fun openCamera() {
         try {
-            val intent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            }
+            val intent =
+                Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                }
             getApplication<Application>().startActivity(intent)
         } catch (e: Exception) {
             // Try alternative method - launch camera via package name
             try {
-                val cameraIntent = getApplication<Application>().packageManager
-                    .getLaunchIntentForPackage("com.google.android.GoogleCamera")
-                    ?: getApplication<Application>().packageManager
-                        .getLaunchIntentForPackage("com.android.camera2")
-                
+                val cameraIntent =
+                    getApplication<Application>().packageManager
+                        .getLaunchIntentForPackage("com.google.android.GoogleCamera")
+                        ?: getApplication<Application>().packageManager
+                            .getLaunchIntentForPackage("com.android.camera2")
+
                 if (cameraIntent != null) {
                     cameraIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     getApplication<Application>().startActivity(cameraIntent)
@@ -247,14 +255,14 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                     Toast.makeText(
                         getApplication(),
                         "Camera app not available",
-                        Toast.LENGTH_SHORT
+                        Toast.LENGTH_SHORT,
                     ).show()
                 }
             } catch (ex: Exception) {
                 Toast.makeText(
                     getApplication(),
                     "Camera app not available",
-                    Toast.LENGTH_SHORT
+                    Toast.LENGTH_SHORT,
                 ).show()
             }
         }

@@ -1,6 +1,5 @@
 package com.symbianx.minimalistlauncher.domain.usecase
 
-import android.content.Context
 import com.symbianx.minimalistlauncher.domain.model.App
 
 /**

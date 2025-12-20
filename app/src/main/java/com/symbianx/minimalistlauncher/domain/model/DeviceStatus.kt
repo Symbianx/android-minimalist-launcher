@@ -15,5 +15,5 @@ data class DeviceStatus(
     val currentTime: String,
     val currentDate: String,
     val batteryPercentage: Int,
-    val isCharging: Boolean = false
+    val isCharging: Boolean = false,
 )

@@ -15,10 +15,10 @@ import com.symbianx.minimalistlauncher.ui.theme.MinimalistLauncherTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
+
         // Enable edge-to-edge display
         enableEdgeToEdge()
-        
+
         // Hide system bars (status bar and navigation bar)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
             // Set behavior for when user swipes to reveal system bars
             systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
-        
+
         setContent {
             MinimalistLauncherTheme {
                 HomeScreen(modifier = Modifier.fillMaxSize())
