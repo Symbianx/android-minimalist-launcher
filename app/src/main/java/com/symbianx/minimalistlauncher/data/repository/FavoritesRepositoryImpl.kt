@@ -7,15 +7,13 @@ import com.symbianx.minimalistlauncher.domain.repository.FavoritesRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 
 /**
  * Implementation of [FavoritesRepository].
  */
 class FavoritesRepositoryImpl(
-    private val favoritesDataSource: FavoritesDataSource
+    private val favoritesDataSource: FavoritesDataSource,
 ) : FavoritesRepository {
-
     private val _favorites = MutableStateFlow<List<FavoriteApp>>(emptyList())
 
     init {
@@ -50,12 +48,13 @@ class FavoritesRepositoryImpl(
         }
 
         // Create new favorite with next available position
-        val newFavorite = FavoriteApp(
-            packageName = app.packageName,
-            label = app.label,
-            addedTimestamp = System.currentTimeMillis(),
-            position = currentFavorites.size
-        )
+        val newFavorite =
+            FavoriteApp(
+                packageName = app.packageName,
+                label = app.label,
+                addedTimestamp = System.currentTimeMillis(),
+                position = currentFavorites.size,
+            )
 
         // Update list
         val updatedFavorites = currentFavorites + newFavorite
@@ -70,9 +69,10 @@ class FavoritesRepositoryImpl(
         val updatedFavorites = currentFavorites.filter { it.packageName != packageName }
 
         // Recompute positions to maintain contiguous 0..N range
-        val reindexed = updatedFavorites.mapIndexed { index, favorite ->
-            favorite.copy(position = index)
-        }
+        val reindexed =
+            updatedFavorites.mapIndexed { index, favorite ->
+                favorite.copy(position = index)
+            }
 
         _favorites.value = reindexed
         favoritesDataSource.saveFavorites(reindexed)
@@ -87,9 +87,10 @@ class FavoritesRepositoryImpl(
 
         // Recompute positions if any were removed
         if (validFavorites.size != currentFavorites.size) {
-            val reindexed = validFavorites.mapIndexed { index, favorite ->
-                favorite.copy(position = index)
-            }
+            val reindexed =
+                validFavorites.mapIndexed { index, favorite ->
+                    favorite.copy(position = index)
+                }
             _favorites.value = reindexed
             favoritesDataSource.saveFavorites(reindexed)
         }

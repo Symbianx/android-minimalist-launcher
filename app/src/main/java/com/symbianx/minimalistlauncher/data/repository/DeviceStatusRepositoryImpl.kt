@@ -15,35 +15,37 @@ import java.util.Locale
  * Implementation of [DeviceStatusRepository].
  */
 class DeviceStatusRepositoryImpl(
-    private val batteryDataSource: BatteryDataSource
+    private val batteryDataSource: BatteryDataSource,
 ) : DeviceStatusRepository {
-
-    private val timeFlow: Flow<String> = flow {
-        while (true) {
-            val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT, Locale.getDefault())
-            emit(timeFormat.format(Date()))
-            delay(60_000) // Update every minute
+    private val timeFlow: Flow<String> =
+        flow {
+            while (true) {
+                val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT, Locale.getDefault())
+                emit(timeFormat.format(Date()))
+                delay(60_000) // Update every minute
+            }
         }
-    }
 
-    private val dateFlow: Flow<String> = flow {
-        while (true) {
-            val dateFormat = SimpleDateFormat("EEE, MMM dd", Locale.getDefault())
-            emit(dateFormat.format(Date()))
-            delay(60_000) // Update every minute
+    private val dateFlow: Flow<String> =
+        flow {
+            while (true) {
+                val dateFormat = SimpleDateFormat("EEE, MMM dd", Locale.getDefault())
+                emit(dateFormat.format(Date()))
+                delay(60_000) // Update every minute
+            }
         }
-    }
 
-    override fun observeDeviceStatus(): Flow<DeviceStatus> = combine(
-        timeFlow,
-        dateFlow,
-        batteryDataSource.observeBatteryStatus()
-    ) { time, date, (batteryPercentage, isCharging) ->
-        DeviceStatus(
-            currentTime = time,
-            currentDate = date,
-            batteryPercentage = batteryPercentage,
-            isCharging = isCharging
-        )
-    }
+    override fun observeDeviceStatus(): Flow<DeviceStatus> =
+        combine(
+            timeFlow,
+            dateFlow,
+            batteryDataSource.observeBatteryStatus(),
+        ) { time, date, (batteryPercentage, isCharging) ->
+            DeviceStatus(
+                currentTime = time,
+                currentDate = date,
+                batteryPercentage = batteryPercentage,
+                isCharging = isCharging,
+            )
+        }
 }

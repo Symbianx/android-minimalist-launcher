@@ -13,5 +13,8 @@ interface SearchAppsUseCase {
      * @param query Search query
      * @return List of apps matching the query, sorted alphabetically
      */
-    fun execute(apps: List<App>, query: String): List<App>
+    fun execute(
+        apps: List<App>,
+        query: String,
+    ): List<App>
 }
