@@ -45,11 +45,11 @@ fun CircularBatteryIndicator(
     val backgroundColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f)
 
     Box(
-        modifier = modifier.size(33.dp),
+        modifier = modifier.size(34.dp),
         contentAlignment = Alignment.Center
     ) {
-        Canvas(modifier = Modifier.size(33.dp)) {
-            val strokeWidth = 4.dp.toPx()
+        Canvas(modifier = Modifier.size(34.dp)) {
+            val strokeWidth = 2.dp.toPx()
             val radius = (size.minDimension - strokeWidth) / 2
             val topLeft = Offset(
                 x = (size.width - radius * 2) / 2,
