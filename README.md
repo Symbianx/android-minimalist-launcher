@@ -4,8 +4,6 @@ A distraction-free Android launcher focused on simplicity and essential interact
 
 <img src="./screenshots/screenshot.png" alt="screenshot-of-the-launcher" width="300"/>
 
-<img src="./screenshots/screenshot.png" alt="screenshot-of-the-launcher" width="300"/>
-
 ## Features
 
 - **Clean Home Screen**: Displays only time, date, and favorite apps
