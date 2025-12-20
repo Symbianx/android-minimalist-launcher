@@ -15,7 +15,7 @@ data class FavoriteApp(
     val packageName: String,
     val label: String,
     val addedTimestamp: Long,
-    val position: Int
+    val position: Int,
 ) {
     companion object {
         /**

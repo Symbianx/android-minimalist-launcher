@@ -11,5 +11,5 @@ import androidx.compose.runtime.Immutable
 @Immutable
 data class LauncherState(
     val searchState: SearchState = SearchState(),
-    val deviceStatus: DeviceStatus = DeviceStatus(currentTime = "", currentDate = "", batteryPercentage = 0)
+    val deviceStatus: DeviceStatus = DeviceStatus(currentTime = "", currentDate = "", batteryPercentage = 0),
 )

@@ -5,6 +5,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ktlint)
+    jacoco
 }
 android {
     namespace = "com.symbianx.minimalistlauncher"
@@ -29,7 +31,7 @@ android {
             isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -57,7 +59,10 @@ android {
 
     signingConfigs {
         getByName("debug") {
-            storeFile = file("/Users/miguel.alexandre/.gemini/tmp/620a373bebffce9e643927d825d3e93057cdff0cf24d64042985e88ea5584463/debug.keystore")
+            val keystorePath =
+                "/Users/miguel.alexandre/.gemini/tmp/" +
+                    "620a373bebffce9e643927d825d3e93057cdff0cf24d64042985e88ea5584463/debug.keystore"
+            storeFile = file(keystorePath)
         }
     }
 }
@@ -98,4 +103,79 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     debugImplementation("com.squareup.leakcanary:leakcanary-android:2.14")
+}
+
+ktlint {
+    android.set(true)
+    ignoreFailures.set(false)
+    disabledRules.set(
+        setOf(
+            // Allow Compose function names to start with uppercase
+            "standard:function-naming",
+            // Allow Compose state property names
+            "standard:property-naming",
+        ),
+    )
+}
+
+jacoco {
+    toolVersion = "0.8.11"
+}
+
+tasks.register<JacocoReport>("jacocoTestReport") {
+    dependsOn("testDebugUnitTest")
+
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+        csv.required.set(false)
+    }
+
+    val fileFilter = listOf(
+        "**/R.class",
+        "**/R$*.class",
+        "**/BuildConfig.*",
+        "**/Manifest*.*",
+        "**/*Test*.*",
+        "android/**/*.*",
+        "**/*\$ViewInjector*.*",
+        "**/*\$ViewBinder*.*",
+        "**/Lambda$*.class",
+        "**/Lambda.class",
+        "**/*Lambda.class",
+        "**/*Lambda*.class",
+        "**/*_MembersInjector.class",
+        "**/Dagger*Component*.*",
+        "**/*Module_*Factory.class",
+        "**/di/**",
+        "**/*_Factory*.*",
+        "**/*Module*.*",
+        "**/*Dagger*.*",
+        "**/*Hilt*.*",
+        "**/hilt_aggregated_deps/**",
+        "**/*_HiltModules*.*",
+        "**/*_Impl*.*",
+        "**/*Theme*.*",
+        "**/*Activity*.*",
+        "**/*MainActivity*.*",
+    )
+
+    val debugTree = fileTree("${project.buildDir}/tmp/kotlin-classes/debug") {
+        exclude(fileFilter)
+    }
+
+    val mainSrc = "${project.projectDir}/src/main/java"
+
+    sourceDirectories.setFrom(files(mainSrc))
+    classDirectories.setFrom(files(debugTree))
+    executionData.setFrom(fileTree(project.buildDir) {
+        include("jacoco/testDebugUnitTest.exec")
+    })
+}
+
+tasks.withType<Test> {
+    configure<JacocoTaskExtension> {
+        isIncludeNoLocationClasses = true
+        excludes = listOf("jdk.internal.*")
+    }
 }
