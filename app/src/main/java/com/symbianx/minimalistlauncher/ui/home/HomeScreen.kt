@@ -35,7 +35,6 @@ fun HomeScreen(
 ) {
     val searchState by viewModel.searchState.collectAsState()
     val deviceStatus by viewModel.deviceStatus.collectAsState()
-    val nowPlayingInfo by viewModel.nowPlayingInfo.collectAsState()
     val favorites by viewModel.favorites.collectAsState()
 
     // Handle back button press when search is active
@@ -68,8 +67,6 @@ fun HomeScreen(
                     // Status bar below circular indicator
                     StatusBar(
                         deviceStatus = deviceStatus,
-                        nowPlayingInfo = nowPlayingInfo,
-                        onNowPlayingClick = { viewModel.openNowPlayingHistory() },
                         modifier = Modifier
                             .align(Alignment.TopCenter)
                             .padding(top = 80.dp)
