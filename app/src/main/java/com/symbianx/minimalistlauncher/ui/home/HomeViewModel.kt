@@ -19,6 +19,7 @@ import com.symbianx.minimalistlauncher.domain.usecase.LaunchAppUseCaseImpl
 import com.symbianx.minimalistlauncher.domain.usecase.ManageFavoritesUseCase
 import com.symbianx.minimalistlauncher.domain.usecase.ManageFavoritesUseCaseImpl
 import com.symbianx.minimalistlauncher.domain.usecase.SearchAppsUseCaseImpl
+import com.symbianx.minimalistlauncher.util.NavigationLogger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -266,6 +267,46 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                 Toast.makeText(
                     getApplication(),
                     "Camera app not available",
+                    Toast.LENGTH_SHORT,
+                ).show()
+            }
+        }
+    }
+
+    /**
+     * Opens the system clock/alarm app.
+     */
+    fun openClockApp() {
+        NavigationLogger.logClockQuickAccess()
+        try {
+            val intent =
+                Intent(android.provider.AlarmClock.ACTION_SHOW_ALARMS).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+            getApplication<Application>().startActivity(intent)
+        } catch (e: Exception) {
+            // Fallback: try to launch the clock app directly
+            try {
+                val clockIntent =
+                    getApplication<Application>().packageManager
+                        .getLaunchIntentForPackage("com.google.android.deskclock")
+                        ?: getApplication<Application>().packageManager
+                            .getLaunchIntentForPackage("com.android.deskclock")
+
+                if (clockIntent != null) {
+                    clockIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    getApplication<Application>().startActivity(clockIntent)
+                } else {
+                    Toast.makeText(
+                        getApplication(),
+                        "Clock app not available",
+                        Toast.LENGTH_SHORT,
+                    ).show()
+                }
+            } catch (ex: Exception) {
+                Toast.makeText(
+                    getApplication(),
+                    "Clock app not available",
                     Toast.LENGTH_SHORT,
                 ).show()
             }

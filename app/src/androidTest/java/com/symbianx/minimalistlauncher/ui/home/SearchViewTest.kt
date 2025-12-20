@@ -3,6 +3,9 @@ package com.symbianx.minimalistlauncher.ui.home
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.swipeRight
+import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import android.content.Intent
 import com.symbianx.minimalistlauncher.domain.model.App
@@ -116,4 +119,34 @@ class SearchViewTest {
         composeTestRule.waitForIdle()
         assertFalse("Expected no launch when query changes before 300ms debounce", launched)
     }
-}
+
+    @Test
+    fun swipeBack_returnToHome() {
+        var swipedBack = false
+        val singleApp = listOf(
+            App(
+                packageName = "com.google.android.apps.maps",
+                label = "Maps",
+                launchIntent = Intent(Intent.ACTION_MAIN).apply { `package` = "com.google.android.apps.maps" },
+            ),
+        )
+
+        composeTestRule.setContent {
+            val state = remember { mutableStateOf(SearchState(isActive = true, query = "Maps", results = singleApp)) }
+            SearchView(
+                searchState = state.value,
+                onQueryChange = { q -> state.value = state.value.copy(query = q) },
+                onAppClick = { },
+                onSwipeBack = { swipedBack = true },
+                autoLaunchEnabled = false,
+            )
+        }
+
+        // Perform swipe right gesture
+        composeTestRule.onRoot().performTouchInput {
+            swipeRight(startX = centerX * 0.2f, endX = centerX * 1.8f)
+        }
+
+        composeTestRule.waitForIdle()
+        assertTrue("Expected swipe back to trigger navigation to home", swipedBack)
+    }

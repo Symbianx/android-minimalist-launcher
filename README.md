@@ -8,9 +8,15 @@ A distraction-free Android launcher focused on simplicity and essential interact
 
 - **Clean Home Screen**: Displays only time, date, and favorite apps
 - **Smart Battery Indicator**: Circular indicator around camera notch (Pixel 8 Pro) that appears only when battery is below 50%
-- **Gesture Navigation**: Swipe right-to-left for app search, swipe up for device search, swipe down for notifications
+- **Gesture Navigation**: 
+  - Swipe right-to-left for app search
+  - Swipe left-to-right in search to return to home (with smooth animation)
+  - Swipe up for device search
+  - Swipe down for notifications
 - **Favorite Apps Management**: Long-press apps in search to add/remove from home screen
-- **Quick Actions**: Bottom corner shortcuts for phone and camera apps
+- **Quick Actions**: Bottom corner shortcuts for phone and camera apps with press animations
+- **Clock Quick Access**: Tap time/date display to instantly open your alarm/clock app
+- **Smooth Animations**: Modern micro-interactions and 60fps transitions throughout
 - **Distraction-Free**: No widgets, no clutter, just what you need
 
 > **Note**: This launcher is part of a personal journey to reduce phone distractions and spend less time mindlessly scrolling. By removing visual clutter and making apps deliberately accessible through search, it encourages more intentional phone usage.
@@ -27,7 +33,4 @@ The goal of this project was to experience spec driven development with:
 ## Future features
 
 - **Dynamic Backgrounds**: Automatic background generation (exploring generative art)
-- **UI Polish**: Animation refinements and micro-interactions
-  - swiping back from left to right in the search screen should return to the home
-- **Clock Quick Access**: Pressing the time/date area should open the built in alarm app for quick access to alerts
 - **Settings Menu**: Toggle auto-launch and other preferences
