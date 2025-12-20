@@ -35,6 +35,10 @@ import androidx.compose.ui.unit.dp
 import com.symbianx.minimalistlauncher.domain.model.App
 import com.symbianx.minimalistlauncher.domain.model.SearchState
 import com.symbianx.minimalistlauncher.domain.usecase.AutoLaunchDecider
+import com.symbianx.minimalistlauncher.util.NavigationLogger
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import kotlinx.coroutines.delay
 
 /**
@@ -44,6 +48,7 @@ import kotlinx.coroutines.delay
  * @param onQueryChange Callback when search query changes
  * @param onAppClick Callback when an app is selected
  * @param onAppLongPress Callback when an app is long-pressed (for adding to favorites)
+ * @param onSwipeBack Callback when user swipes back from search to home
  * @param modifier Modifier for the search view
  */
 @OptIn(ExperimentalFoundationApi::class)
@@ -54,10 +59,12 @@ fun SearchView(
     onQueryChange: (String) -> Unit,
     onAppClick: (App) -> Unit,
     onAppLongPress: (App) -> Unit = {},
+    onSwipeBack: () -> Unit = {},
     autoLaunchEnabled: Boolean = true,
     autoLaunchDelayMs: Long = 300,
 ) {
     val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
 
     AnimatedVisibility(
         visible = searchState.isActive,
@@ -70,7 +77,24 @@ fun SearchView(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .padding(16.dp),
+                    .padding(16.dp)
+                    .pointerInput(Unit) {
+                        var totalDrag = 0f
+                        detectHorizontalDragGestures(
+                            onDragEnd = {
+                                if (totalDrag > 200f) {
+                                    NavigationLogger.logSwipeBack()
+                                    focusManager.clearFocus()
+                                    onSwipeBack()
+                                }
+                                totalDrag = 0f
+                            },
+                            onHorizontalDrag = { change, dragAmount ->
+                                change.consume()
+                                totalDrag += dragAmount
+                            }
+                        )
+                    },
         ) {
             TextField(
                 value = searchState.query,

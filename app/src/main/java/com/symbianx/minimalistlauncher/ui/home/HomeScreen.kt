@@ -68,6 +68,7 @@ fun HomeScreen(
                     // Status bar below circular indicator
                     StatusBar(
                         deviceStatus = deviceStatus,
+                        onClockTap = { viewModel.openClockApp() },
                         modifier =
                             Modifier
                                 .align(Alignment.TopCenter)
@@ -100,6 +101,7 @@ fun HomeScreen(
             onQueryChange = { viewModel.updateSearchQuery(it) },
             onAppClick = { viewModel.launchApp(it) },
             onAppLongPress = { viewModel.addToFavorites(it) },
+            onSwipeBack = { viewModel.deactivateSearch() },
             autoLaunchEnabled = viewModel.autoLaunchEnabled,
             autoLaunchDelayMs = viewModel.autoLaunchDelayMs,
             modifier = Modifier.fillMaxSize(),

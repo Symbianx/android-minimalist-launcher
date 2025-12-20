@@ -1,5 +1,8 @@
 package com.symbianx.minimalistlauncher.ui.home.components
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,7 +15,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.unit.dp
 
 /**
@@ -37,9 +43,18 @@ fun QuickActionButtons(
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         // Phone button (bottom left corner)
+        val phoneInteractionSource = remember { MutableInteractionSource() }
+        val isPhonePressed by phoneInteractionSource.collectIsPressedAsState()
+        val phoneScale by animateFloatAsState(
+            targetValue = if (isPhonePressed) 0.85f else 1f,
+            label = "phoneScale"
+        )
         IconButton(
             onClick = onPhoneClick,
-            modifier = Modifier.size(48.dp),
+            modifier = Modifier
+                .size(48.dp)
+                .scale(phoneScale),
+            interactionSource = phoneInteractionSource,
         ) {
             Icon(
                 imageVector = Icons.Default.Call,
@@ -50,9 +65,18 @@ fun QuickActionButtons(
         }
 
         // Camera button (bottom right corner)
+        val cameraInteractionSource = remember { MutableInteractionSource() }
+        val isCameraPressed by cameraInteractionSource.collectIsPressedAsState()
+        val cameraScale by animateFloatAsState(
+            targetValue = if (isCameraPressed) 0.85f else 1f,
+            label = "cameraScale"
+        )
         IconButton(
             onClick = onCameraClick,
-            modifier = Modifier.size(48.dp),
+            modifier = Modifier
+                .size(48.dp)
+                .scale(cameraScale),
+            interactionSource = cameraInteractionSource,
         ) {
             Icon(
                 imageVector = Icons.Filled.CameraAlt,
