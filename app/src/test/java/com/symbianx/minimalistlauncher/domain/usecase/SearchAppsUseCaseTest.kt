@@ -28,15 +28,17 @@ class SearchAppsUseCaseTest {
     }
 
     @Test
-    fun `execute with empty query returns empty list`() {
+    fun `execute with empty query returns all apps sorted`() {
         val result = useCase.execute(testApps, "")
-        assertTrue(result.isEmpty())
+        val expected = testApps.sortedBy { it.label.lowercase() }
+        assertEquals(expected, result)
     }
 
     @Test
-    fun `execute with blank query returns empty list`() {
+    fun `execute with blank query returns all apps sorted`() {
         val result = useCase.execute(testApps, "   ")
-        assertTrue(result.isEmpty())
+        val expected = testApps.sortedBy { it.label.lowercase() }
+        assertEquals(expected, result)
     }
 
     @Test
