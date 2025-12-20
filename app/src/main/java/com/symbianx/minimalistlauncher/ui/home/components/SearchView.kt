@@ -45,11 +45,11 @@ import com.symbianx.minimalistlauncher.domain.model.SearchState
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SearchView(
+    modifier: Modifier = Modifier,
     searchState: SearchState,
     onQueryChange: (String) -> Unit,
     onAppClick: (App) -> Unit,
     onAppLongPress: (App) -> Unit = {},
-    modifier: Modifier = Modifier,
 ) {
     val focusRequester = remember { FocusRequester() }
 
@@ -86,44 +86,42 @@ fun SearchView(
                     ),
             )
 
-            if (searchState.query.isNotBlank()) {
-                if (searchState.results.isEmpty()) {
-                    Box(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(top = 32.dp),
-                        contentAlignment = Alignment.Center,
-                    ) {
+            if (searchState.results.isEmpty()) {
+                Box(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(top = 32.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = "No apps found",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                    )
+                }
+            } else {
+                LazyColumn(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp),
+                ) {
+                    items(searchState.results) { app ->
                         Text(
-                            text = "No apps found",
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                            text = app.label,
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .combinedClickable(
+                                        onClick = { onAppClick(app) },
+                                        onLongClick = { onAppLongPress(app) },
+                                        indication = null,
+                                        interactionSource = remember { MutableInteractionSource() },
+                                    )
+                                    .padding(vertical = 20.dp, horizontal = 8.dp),
+                            style = MaterialTheme.typography.headlineSmall,
                         )
-                    }
-                } else {
-                    LazyColumn(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(top = 16.dp),
-                    ) {
-                        items(searchState.results) { app ->
-                            Text(
-                                text = app.label,
-                                modifier =
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .combinedClickable(
-                                            onClick = { onAppClick(app) },
-                                            onLongClick = { onAppLongPress(app) },
-                                            indication = null,
-                                            interactionSource = remember { MutableInteractionSource() },
-                                        )
-                                        .padding(vertical = 20.dp, horizontal = 8.dp),
-                                style = MaterialTheme.typography.headlineSmall,
-                            )
-                        }
                     }
                 }
             }

@@ -75,7 +75,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                 isActive = isActive,
                 query = query,
                 results =
-                    if (isActive && query.isNotBlank()) {
+                    if (isActive) {
                         searchAppsUseCase.execute(apps, query)
                     } else {
                         emptyList()
