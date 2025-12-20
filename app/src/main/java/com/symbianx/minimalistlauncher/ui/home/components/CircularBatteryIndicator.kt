@@ -33,19 +33,19 @@ fun CircularBatteryIndicator(
     // Always show the circular indicator for now (we can refine device detection later)
     val batteryColor = when {
         isCharging -> MaterialTheme.colorScheme.tertiary
-        batteryPercentage > 50 -> MaterialTheme.colorScheme.primary
-        batteryPercentage > 20 -> Color(0xFFFFA500) // Orange
-        else -> MaterialTheme.colorScheme.error
+        batteryPercentage > 30 -> MaterialTheme.colorScheme.primary
+        batteryPercentage > 10 -> Color(0xFFFFA500) // Orange
+        else -> Color(0xFFFF0000)
     }
 
     val backgroundColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f)
 
     Box(
-        modifier = modifier.size(40.dp),
+        modifier = modifier.size(33.dp),
         contentAlignment = Alignment.Center
     ) {
-        Canvas(modifier = Modifier.size(40.dp)) {
-            val strokeWidth = 2.5.dp.toPx()
+        Canvas(modifier = Modifier.size(33.dp)) {
+            val strokeWidth = 4.dp.toPx()
             val radius = (size.minDimension - strokeWidth) / 2
             val topLeft = Offset(
                 x = (size.width - radius * 2) / 2,
