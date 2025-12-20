@@ -100,6 +100,8 @@ fun HomeScreen(
             onQueryChange = { viewModel.updateSearchQuery(it) },
             onAppClick = { viewModel.launchApp(it) },
             onAppLongPress = { viewModel.addToFavorites(it) },
+            autoLaunchEnabled = viewModel.autoLaunchEnabled,
+            autoLaunchDelayMs = viewModel.autoLaunchDelayMs,
             modifier = Modifier.fillMaxSize(),
         )
     }

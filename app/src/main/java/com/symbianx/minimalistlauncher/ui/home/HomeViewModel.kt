@@ -54,6 +54,10 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val launchAppUseCase = LaunchAppUseCaseImpl(application.applicationContext)
     private val manageFavoritesUseCase: ManageFavoritesUseCase = ManageFavoritesUseCaseImpl(favoritesRepository)
 
+    // Auto-Launch configuration (future: make configurable via settings)
+    val autoLaunchEnabled: Boolean = true
+    val autoLaunchDelayMs: Long = 300L
+
     private val _searchQuery = MutableStateFlow("")
     private val _isSearchActive = MutableStateFlow(false)
 
