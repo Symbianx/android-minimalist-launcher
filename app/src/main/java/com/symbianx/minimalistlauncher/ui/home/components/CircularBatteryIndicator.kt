@@ -37,8 +37,9 @@ fun CircularBatteryIndicator(
     
     val batteryColor = when {
         isCharging -> MaterialTheme.colorScheme.tertiary
-        batteryPercentage > 20 -> Color(0xFFFFA500) // Orange
-        else -> Color(0xFFFF0000) // Red
+        batteryPercentage <= 10 -> Color(0xFFFF0000) // Red at 10% or below
+        batteryPercentage <= 20 -> Color(0xFFFFA500) // Orange at 20% or below
+        else -> MaterialTheme.colorScheme.primary // Primary color for 21-49%
     }
 
     val backgroundColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f)
