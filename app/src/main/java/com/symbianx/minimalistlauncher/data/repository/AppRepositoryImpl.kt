@@ -9,8 +9,7 @@ import kotlinx.coroutines.flow.Flow
  * Implementation of [AppRepository] that delegates to [AppListDataSource].
  */
 class AppRepositoryImpl(
-    private val appListDataSource: AppListDataSource
+    private val appListDataSource: AppListDataSource,
 ) : AppRepository {
-
     override fun getApps(): Flow<List<App>> = appListDataSource.getInstalledApps()
 }

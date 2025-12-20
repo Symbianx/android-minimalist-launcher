@@ -27,6 +27,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.symbianx.minimalistlauncher.domain.model.App
 import com.symbianx.minimalistlauncher.domain.model.SearchState
@@ -47,7 +49,7 @@ fun SearchView(
     onQueryChange: (String) -> Unit,
     onAppClick: (App) -> Unit,
     onAppLongPress: (App) -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val focusRequester = remember { FocusRequester() }
 
@@ -55,62 +57,71 @@ fun SearchView(
         visible = searchState.isActive,
         enter = fadeIn() + slideInVertically(),
         exit = fadeOut() + slideOutVertically(),
-        modifier = modifier
+        modifier = modifier,
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
         ) {
             TextField(
                 value = searchState.query,
                 onValueChange = onQueryChange,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .focusRequester(focusRequester),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .focusRequester(focusRequester)
+                        .semantics {
+                            contentDescription = "Search apps"
+                        },
                 placeholder = { Text("Search apps...") },
                 singleLine = true,
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent,
-                    focusedIndicatorColor = MaterialTheme.colorScheme.primary,
-                    unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
-                )
+                colors =
+                    TextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                        unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
+                    ),
             )
 
             if (searchState.query.isNotBlank()) {
                 if (searchState.results.isEmpty()) {
                     Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 32.dp),
-                        contentAlignment = Alignment.Center
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(top = 32.dp),
+                        contentAlignment = Alignment.Center,
                     ) {
                         Text(
                             text = "No apps found",
                             style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                         )
                     }
                 } else {
                     LazyColumn(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 16.dp)
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(top = 16.dp),
                     ) {
                         items(searchState.results) { app ->
                             Text(
                                 text = app.label,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .combinedClickable(
-                                        onClick = { onAppClick(app) },
-                                        onLongClick = { onAppLongPress(app) },
-                                        indication = null,
-                                        interactionSource = remember { MutableInteractionSource() }
-                                    )
-                                    .padding(vertical = 20.dp, horizontal = 8.dp),
-                                style = MaterialTheme.typography.headlineSmall
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .combinedClickable(
+                                            onClick = { onAppClick(app) },
+                                            onLongClick = { onAppLongPress(app) },
+                                            indication = null,
+                                            interactionSource = remember { MutableInteractionSource() },
+                                        )
+                                        .padding(vertical = 20.dp, horizontal = 8.dp),
+                                style = MaterialTheme.typography.headlineSmall,
                             )
                         }
                     }

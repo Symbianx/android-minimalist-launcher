@@ -28,33 +28,35 @@ import androidx.compose.ui.unit.dp
 fun CircularBatteryIndicator(
     batteryPercentage: Int,
     isCharging: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     // Only show when battery is below 50%
     if (batteryPercentage >= 50) {
         return
     }
-    
-    val batteryColor = when {
-        isCharging -> MaterialTheme.colorScheme.tertiary
-        batteryPercentage <= 10 -> Color(0xFFFF0000) // Red at 10% or below
-        batteryPercentage <= 20 -> Color(0xFFFFA500) // Orange at 20% or below
-        else -> MaterialTheme.colorScheme.primary // Primary color for 21-49%
-    }
+
+    val batteryColor =
+        when {
+            isCharging -> MaterialTheme.colorScheme.tertiary
+            batteryPercentage <= 10 -> Color(0xFFFF0000) // Red at 10% or below
+            batteryPercentage <= 20 -> Color(0xFFFFA500) // Orange at 20% or below
+            else -> MaterialTheme.colorScheme.primary // Primary color for 21-49%
+        }
 
     val backgroundColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f)
 
     Box(
         modifier = modifier.size(34.dp),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Canvas(modifier = Modifier.size(34.dp)) {
             val strokeWidth = 2.dp.toPx()
             val radius = (size.minDimension - strokeWidth) / 2
-            val topLeft = Offset(
-                x = (size.width - radius * 2) / 2,
-                y = (size.height - radius * 2) / 2
-            )
+            val topLeft =
+                Offset(
+                    x = (size.width - radius * 2) / 2,
+                    y = (size.height - radius * 2) / 2,
+                )
             val arcSize = Size(radius * 2, radius * 2)
 
             // Background circle
@@ -65,7 +67,7 @@ fun CircularBatteryIndicator(
                 useCenter = false,
                 topLeft = topLeft,
                 size = arcSize,
-                style = Stroke(width = strokeWidth, cap = StrokeCap.Round)
+                style = Stroke(width = strokeWidth, cap = StrokeCap.Round),
             )
 
             // Battery level arc
@@ -77,7 +79,7 @@ fun CircularBatteryIndicator(
                 useCenter = false,
                 topLeft = topLeft,
                 size = arcSize,
-                style = Stroke(width = strokeWidth, cap = StrokeCap.Round)
+                style = Stroke(width = strokeWidth, cap = StrokeCap.Round),
             )
         }
     }
@@ -89,5 +91,5 @@ fun CircularBatteryIndicator(
  */
 fun isPixel8Pro(): Boolean {
     return Build.MODEL.contains("Pixel 8 Pro", ignoreCase = true) ||
-           Build.MODEL.contains("Pixel 8a", ignoreCase = true) // Also support Pixel 8a
+        Build.MODEL.contains("Pixel 8a", ignoreCase = true) // Also support Pixel 8a
 }

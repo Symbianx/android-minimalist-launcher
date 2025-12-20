@@ -31,7 +31,7 @@ import com.symbianx.minimalistlauncher.ui.home.components.isPixel8Pro
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = viewModel(),
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val searchState by viewModel.searchState.collectAsState()
     val deviceStatus by viewModel.deviceStatus.collectAsState()
@@ -44,14 +44,14 @@ fun HomeScreen(
 
     Surface(
         modifier = modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+        color = MaterialTheme.colorScheme.background,
     ) {
         GestureHandler(
             onSwipeRightToLeft = { viewModel.activateSearch() },
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         ) {
             Box(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             ) {
                 if (!searchState.isActive) {
                     if (isPixel8Pro()) {
@@ -59,17 +59,19 @@ fun HomeScreen(
                         CircularBatteryIndicator(
                             batteryPercentage = deviceStatus.batteryPercentage,
                             isCharging = deviceStatus.isCharging,
-                            modifier = Modifier
-                                .align(Alignment.TopCenter)
-                                .offset(y = 8.dp)
+                            modifier =
+                                Modifier
+                                    .align(Alignment.TopCenter)
+                                    .offset(y = 8.dp),
                         )
                     }
                     // Status bar below circular indicator
                     StatusBar(
                         deviceStatus = deviceStatus,
-                        modifier = Modifier
-                            .align(Alignment.TopCenter)
-                            .padding(top = 80.dp)
+                        modifier =
+                            Modifier
+                                .align(Alignment.TopCenter)
+                                .padding(top = 80.dp),
                     )
 
                     // Favorites list below status bar
@@ -77,16 +79,17 @@ fun HomeScreen(
                         favorites = favorites,
                         onFavoriteClick = { viewModel.launchFavorite(it) },
                         onFavoriteLongPress = { viewModel.removeFromFavorites(it) },
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .padding(top = 200.dp) // Adjust based on status bar height
+                        modifier =
+                            Modifier
+                                .align(Alignment.Center)
+                                .padding(top = 200.dp), // Adjust based on status bar height
                     )
 
                     // Quick action buttons at bottom
                     QuickActionButtons(
                         onPhoneClick = { viewModel.openPhoneDialer() },
                         onCameraClick = { viewModel.openCamera() },
-                        modifier = Modifier.align(Alignment.BottomCenter)
+                        modifier = Modifier.align(Alignment.BottomCenter),
                     )
                 }
             }
@@ -97,7 +100,7 @@ fun HomeScreen(
             onQueryChange = { viewModel.updateSearchQuery(it) },
             onAppClick = { viewModel.launchApp(it) },
             onAppLongPress = { viewModel.addToFavorites(it) },
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         )
     }
 }

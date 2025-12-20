@@ -7,8 +7,10 @@ import java.util.Locale
  * Implementation of [SearchAppsUseCase] with case-insensitive partial matching.
  */
 class SearchAppsUseCaseImpl : SearchAppsUseCase {
-
-    override fun execute(apps: List<App>, query: String): List<App> {
+    override fun execute(
+        apps: List<App>,
+        query: String,
+    ): List<App> {
         if (query.isBlank()) {
             return emptyList()
         }
