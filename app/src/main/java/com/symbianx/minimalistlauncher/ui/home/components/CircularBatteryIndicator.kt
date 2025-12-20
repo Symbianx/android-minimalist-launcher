@@ -17,8 +17,8 @@ import androidx.compose.ui.unit.dp
 
 /**
  * Circular battery indicator that displays battery level as a progress ring.
+ * Only visible when battery is below 50%.
  * On Pixel 8 Pro, positioned around camera notch area.
- * On other devices, falls back to standard display.
  *
  * @param batteryPercentage Current battery level (0-100)
  * @param isCharging Whether the device is currently charging
@@ -30,12 +30,15 @@ fun CircularBatteryIndicator(
     isCharging: Boolean,
     modifier: Modifier = Modifier
 ) {
-    // Always show the circular indicator for now (we can refine device detection later)
+    // Only show when battery is below 50%
+    if (batteryPercentage >= 50) {
+        return
+    }
+    
     val batteryColor = when {
         isCharging -> MaterialTheme.colorScheme.tertiary
-        batteryPercentage > 30 -> MaterialTheme.colorScheme.primary
-        batteryPercentage > 10 -> Color(0xFFFFA500) // Orange
-        else -> Color(0xFFFF0000)
+        batteryPercentage > 20 -> Color(0xFFFFA500) // Orange
+        else -> Color(0xFFFF0000) // Red
     }
 
     val backgroundColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f)
@@ -83,7 +86,7 @@ fun CircularBatteryIndicator(
  * Checks if the device is a Pixel 8 Pro.
  * This is a simplified check based on device model.
  */
-private fun isPixel8Pro(): Boolean {
+fun isPixel8Pro(): Boolean {
     return Build.MODEL.contains("Pixel 8 Pro", ignoreCase = true) ||
            Build.MODEL.contains("Pixel 8a", ignoreCase = true) // Also support Pixel 8a
 }

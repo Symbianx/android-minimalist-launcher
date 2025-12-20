@@ -40,22 +40,24 @@ fun StatusBar(
         verticalArrangement = Arrangement.spacedBy(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Battery percentage text
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "${deviceStatus.batteryPercentage}%",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
-            )
-            
-            if (deviceStatus.isCharging) {
+        // Battery percentage text - only show on non-Pixel 8 Pro devices
+        if (!isPixel8Pro()) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text(
-                    text = "⚡",
-                    style = MaterialTheme.typography.bodyLarge
+                    text = "${deviceStatus.batteryPercentage}%",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
                 )
+                
+                if (deviceStatus.isCharging) {
+                    Text(
+                        text = "⚡",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
             }
         }
         
