@@ -110,7 +110,7 @@ fun SearchView(
                                         interactionSource = remember { MutableInteractionSource() }
                                     )
                                     .padding(vertical = 20.dp, horizontal = 8.dp),
-                                style = MaterialTheme.typography.bodyLarge
+                                style = MaterialTheme.typography.headlineSmall
                             )
                         }
                     }
