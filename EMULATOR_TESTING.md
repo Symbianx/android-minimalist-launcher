@@ -37,8 +37,7 @@ emulator -avd MinimalistLauncherTest
 
 ### 3. Install & Test
 ```bash
-# Install the app
-cd /Users/miguel.alexandre/repos/Symbianx/android-minimalist-launcher
+# Install the app from your project directory
 ./gradlew installDebug
 
 # Or manually:

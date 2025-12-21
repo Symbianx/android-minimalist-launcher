@@ -1,8 +1,12 @@
 # Android Minimalist Launcher
 
+<img src="./static/logo.svg" alt="logo of the launcher" width="100"/>
+
+
+
 A distraction-free Android launcher focused on simplicity and essential interactions. Built entirely using [github/spec-kit](https://github.com/github/spec-kit) to explore spec-driven development with Android/Kotlin.
 
-<img src="./screenshots/screenshot.png" alt="screenshot-of-the-launcher" width="300"/>
+<img src="./static/screenshot.png" alt="screenshot-of-the-launcher" width="300"/>
 
 ## Features
 
@@ -29,7 +33,14 @@ The goal of this project was to experience spec driven development with:
 * A programming language I have never tried (Kotlin);
 * A stack I've never been profecient with (Mobile);
 
+## CI/CD
 
+This project uses GitHub Actions for automated releases to the Google Play Store.
+
+- **Automated Releases**: Publish a GitHub Release to trigger automatic Play Store deployment
+- **PR Validation**: All pull requests are automatically built and tested
+- **Setup Guide**: See [.github/RELEASE_SETUP.md](.github/RELEASE_SETUP.md) for configuration instructions
+- **Quick Release**: See [RELEASE.md](RELEASE.md) for the release process
 
 ## Future features
 

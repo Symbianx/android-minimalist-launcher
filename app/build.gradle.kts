@@ -16,12 +16,39 @@ android {
         applicationId = "com.symbianx.minimalistlauncher"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        // Allow version override from command line (used in CI/CD)
+        versionCode = (project.findProperty("versionCode") as String?)?.toIntOrNull() ?: 1
+        versionName = (project.findProperty("versionName") as String?) ?: "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
+        }
+    }
+
+    signingConfigs {
+        getByName("debug") {
+            // Uses default debug keystore
+            // Location: ~/.android/debug.keystore
+        }
+        
+        create("release") {
+            // Use injected signing config from CI/CD or local.properties
+            val injectedKeystore: String? = System.getenv("SIGNING_KEYSTORE_PATH")
+                ?: project.findProperty("android.injected.signing.store.file") as String?
+            val injectedStorePassword: String? = System.getenv("SIGNING_KEYSTORE_PASSWORD")
+                ?: project.findProperty("android.injected.signing.store.password") as String?
+            val injectedKeyAlias: String? = System.getenv("SIGNING_KEY_ALIAS")
+                ?: project.findProperty("android.injected.signing.key.alias") as String?
+            val injectedKeyPassword: String? = System.getenv("SIGNING_KEY_PASSWORD")
+                ?: project.findProperty("android.injected.signing.key.password") as String?
+            
+            if (injectedKeystore != null) {
+                storeFile = file(injectedKeystore)
+                storePassword = injectedStorePassword
+                keyAlias = injectedKeyAlias
+                keyPassword = injectedKeyPassword
+            }
         }
     }
 
@@ -33,6 +60,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 
@@ -54,15 +82,6 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-
-    signingConfigs {
-        getByName("debug") {
-            val keystorePath =
-                "/Users/miguel.alexandre/.gemini/tmp/" +
-                    "620a373bebffce9e643927d825d3e93057cdff0cf24d64042985e88ea5584463/debug.keystore"
-            storeFile = file(keystorePath)
         }
     }
 }
@@ -87,12 +106,12 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.10.0")
 
     // Kotlinx Serialization
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
 
     // Unit Testing
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
-    testImplementation("org.robolectric:robolectric:4.10.3")
+    testImplementation("org.robolectric:robolectric:4.16")
 
     // Android Testing
     androidTestImplementation(composeBom)
