@@ -5,9 +5,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,6 +26,8 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -36,9 +36,6 @@ import com.symbianx.minimalistlauncher.domain.model.App
 import com.symbianx.minimalistlauncher.domain.model.SearchState
 import com.symbianx.minimalistlauncher.domain.usecase.AutoLaunchDecider
 import com.symbianx.minimalistlauncher.util.NavigationLogger
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalFocusManager
 import kotlinx.coroutines.delay
 
 /**
@@ -51,7 +48,6 @@ import kotlinx.coroutines.delay
  * @param onSwipeBack Callback when user swipes back from search to home
  * @param modifier Modifier for the search view
  */
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SearchView(
     modifier: Modifier = Modifier,
@@ -139,19 +135,10 @@ fun SearchView(
                             .padding(top = 16.dp),
                 ) {
                     items(searchState.results) { app ->
-                        Text(
-                            text = app.label,
-                            modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .combinedClickable(
-                                        onClick = { onAppClick(app) },
-                                        onLongClick = { onAppLongPress(app) },
-                                        indication = null,
-                                        interactionSource = remember { MutableInteractionSource() },
-                                    )
-                                    .padding(vertical = 20.dp, horizontal = 8.dp),
-                            style = MaterialTheme.typography.headlineSmall,
+                        AppListItem(
+                            app = app,
+                            onClick = onAppClick,
+                            onLongClick = onAppLongPress,
                         )
                     }
                 }

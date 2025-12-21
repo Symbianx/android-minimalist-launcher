@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.symbianx.minimalistlauncher.ui.home.components.AppContextMenu
 import com.symbianx.minimalistlauncher.ui.home.components.CircularBatteryIndicator
 import com.symbianx.minimalistlauncher.ui.home.components.FavoritesList
 import com.symbianx.minimalistlauncher.ui.home.components.GestureHandler
@@ -36,6 +37,7 @@ fun HomeScreen(
     val searchState by viewModel.searchState.collectAsState()
     val deviceStatus by viewModel.deviceStatus.collectAsState()
     val favorites by viewModel.favorites.collectAsState()
+    val contextMenuApp by viewModel.contextMenuApp.collectAsState()
 
     // Handle back button press when search is active
     BackHandler(enabled = searchState.isActive) {
@@ -100,11 +102,23 @@ fun HomeScreen(
             searchState = searchState,
             onQueryChange = { viewModel.updateSearchQuery(it) },
             onAppClick = { viewModel.launchApp(it) },
-            onAppLongPress = { viewModel.addToFavorites(it) },
+            onAppLongPress = { viewModel.showContextMenu(it) },
             onSwipeBack = { viewModel.deactivateSearch() },
             autoLaunchEnabled = viewModel.autoLaunchEnabled,
             autoLaunchDelayMs = viewModel.autoLaunchDelayMs,
             modifier = Modifier.fillMaxSize(),
         )
+
+        // Context menu
+        contextMenuApp?.let { app ->
+            AppContextMenu(
+                app = app,
+                isFavorite = viewModel.isAppFavorite(app),
+                onDismiss = { viewModel.hideContextMenu() },
+                onAddToFavorites = { viewModel.addAppToFavorites(app) },
+                onRemoveFromFavorites = { viewModel.removeAppFromFavorites(app) },
+                onOpenAppInfo = { viewModel.openAppInfo(app) },
+            )
+        }
     }
 }
