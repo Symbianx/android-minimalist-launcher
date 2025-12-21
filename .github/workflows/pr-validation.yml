@@ -34,7 +34,7 @@ jobs:
         run: ./gradlew assembleDebug
       
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v6
         if: success()
         with:
           name: debug-apk
