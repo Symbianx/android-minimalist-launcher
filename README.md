@@ -32,7 +32,6 @@ The goal of this project was to experience spec driven development with:
 
 ## Future features
 
-* More polishing, the battery indicator should not display the grey'ish complete circle, only the actual % of the circle should be showing. When charging, the circle should have an animation to indicate charging, like the % circle should be constantly filling up 
 * Have whatsapp on the bottom right instead of camera? Maybe a setting for this?
 * **Settings Menu**: Toggle auto-launch and other preferences
 * **Dynamic Backgrounds**: Automatic background generation (exploring generative art)
