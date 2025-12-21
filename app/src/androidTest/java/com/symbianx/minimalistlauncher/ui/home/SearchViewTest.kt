@@ -150,3 +150,5 @@ class SearchViewTest {
         composeTestRule.waitForIdle()
         assertTrue("Expected swipe back to trigger navigation to home", swipedBack)
     }
+
+}
