@@ -52,6 +52,7 @@ As a user, I want to quickly find and launch any installed app by typing its nam
 4. **Given** I am on the home screen, **When** I type a partial app name like "cal", **Then** Calendar app appears in results
 5. **Given** I type an app name that doesn't exist, **When** search completes, **Then** I see "No apps found" message
 6. **Given** multiple apps match my search (e.g., "go" matches Google, Google Maps), **When** I view results, **Then** all matching apps are listed in alphabetical order
+7. **Given** search results are visible and I start scrolling the list, **When** the scroll begins, **Then** the keyboard hides and the search field loses focus for unobstructed browsing
 
 ---
 

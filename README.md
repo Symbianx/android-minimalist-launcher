@@ -13,6 +13,7 @@ A distraction-free Android launcher focused on simplicity and essential interact
   - Swipe left-to-right in search to return to home (with smooth animation)
   - Swipe up for device search
   - Swipe down for notifications
+  - Search UX: keyboard automatically hides when you start scrolling results
 - **Favorite Apps Management**: Long-press apps in search to add/remove from home screen
 - **Quick Actions**: Bottom corner shortcuts for phone and camera apps with press animations
 - **Clock Quick Access**: Tap time/date display to instantly open your alarm/clock app

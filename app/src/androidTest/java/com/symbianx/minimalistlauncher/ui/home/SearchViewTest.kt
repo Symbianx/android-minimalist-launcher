@@ -4,7 +4,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.assertIsFocused
+import androidx.compose.ui.test.assertIsNotFocused
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.swipeRight
+import androidx.compose.ui.test.swipeUp
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import android.content.Intent
@@ -149,6 +153,39 @@ class SearchViewTest {
 
         composeTestRule.waitForIdle()
         assertTrue("Expected swipe back to trigger navigation to home", swipedBack)
+    }
+
+    @Test
+    fun keyboardDismiss_onScroll_clearsFocus() {
+        // Prepare a list with enough items to allow scrolling
+        val apps = (1..50).map { idx ->
+            App(
+                packageName = "com.example.app$idx",
+                label = "Example App $idx",
+                launchIntent = Intent(Intent.ACTION_MAIN).apply { `package` = "com.example.app$idx" },
+            )
+        }
+
+        composeTestRule.setContent {
+            val state = remember { mutableStateOf(SearchState(isActive = true, query = "ex", results = apps)) }
+            SearchView(
+                searchState = state.value,
+                onQueryChange = { q -> state.value = state.value.copy(query = q) },
+                onAppClick = { },
+                autoLaunchEnabled = false,
+            )
+        }
+
+        // Text field should initially be focused when search is active
+        composeTestRule.onNodeWithContentDescription("Search apps").assertIsFocused()
+
+        // Scroll the results list; this should hide the keyboard and clear focus
+        composeTestRule.onNodeWithContentDescription("App results").performTouchInput {
+            swipeUp()
+        }
+
+        // Verify the text field is no longer focused
+        composeTestRule.onNodeWithContentDescription("Search apps").assertIsNotFocused()
     }
 
 }
