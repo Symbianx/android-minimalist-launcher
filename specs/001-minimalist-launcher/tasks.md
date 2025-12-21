@@ -275,6 +275,15 @@ T018 (Integration tests)
 5. **Documentation**: README updated with complete setup, build, and testing instructions
 6. **Automation**: All testing can be done on emulator without physical device
 
+---
+
+## Additional Polish Tasks (Post-Merge)
+
+These follow-up tasks refine search UX and documentation beyond the original task list.
+
+- [X] T030 [P] Add UI test for SearchView keyboard dismissal on scroll in app/src/androidTest/java/com/symbianx/minimalistlauncher/ui/home/SearchViewTest.kt
+- [X] T031 [P] Update documentation to note keyboard hides when scrolling results in README.md and specs/001-minimalist-launcher/spec.md
+
 ### Next Steps for Production Readiness
 
 1. ✅ **Automated tests** - All complete and runnable on emulator

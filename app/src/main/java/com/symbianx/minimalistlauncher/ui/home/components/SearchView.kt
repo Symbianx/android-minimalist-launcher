@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -28,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -61,6 +63,7 @@ fun SearchView(
 ) {
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     AnimatedVisibility(
         visible = searchState.isActive,
@@ -128,11 +131,26 @@ fun SearchView(
                     )
                 }
             } else {
+                // Remember list state to monitor scroll events
+                val listState = rememberLazyListState()
+
+                // Hide keyboard when user starts scrolling the results
+                LaunchedEffect(listState.isScrollInProgress, searchState.isActive) {
+                    if (searchState.isActive && listState.isScrollInProgress) {
+                        keyboardController?.hide()
+                        focusManager.clearFocus()
+                    }
+                }
+
                 LazyColumn(
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .padding(top = 16.dp),
+                            .padding(top = 16.dp)
+                            .semantics {
+                                contentDescription = "App results"
+                            },
+                    state = listState,
                 ) {
                     items(searchState.results) { app ->
                         AppListItem(
