@@ -3,6 +3,7 @@ package com.symbianx.minimalistlauncher.ui.home
 import android.app.Application
 import android.content.Intent
 import android.widget.Toast
+import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.symbianx.minimalistlauncher.data.local.FavoritesDataSourceImpl
@@ -61,6 +62,9 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _searchQuery = MutableStateFlow("")
     private val _isSearchActive = MutableStateFlow(false)
+    private val _contextMenuApp = MutableStateFlow<App?>(null)
+
+    val contextMenuApp: StateFlow<App?> = _contextMenuApp
 
     private val allApps: StateFlow<List<App>> =
         appRepository.getApps()
@@ -216,6 +220,79 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     /**
+     * Shows the context menu for a specific app.
+     */
+    fun showContextMenu(app: App) {
+        _contextMenuApp.value = app
+    }
+
+    /**
+     * Hides the context menu.
+     */
+    fun hideContextMenu() {
+        _contextMenuApp.value = null
+    }
+
+    /**
+     * Checks if an app is in favorites.
+     */
+    fun isAppFavorite(app: App): Boolean {
+        return favorites.value.any { it.packageName == app.packageName }
+    }
+
+    /**
+     * Adds an app to favorites from context menu.
+     */
+    fun addAppToFavorites(app: App) {
+        viewModelScope.launch {
+            when (val result = manageFavoritesUseCase.addToFavorites(app)) {
+                is ManageFavoritesUseCase.AddFavoriteResult.Success -> {
+                    Toast.makeText(
+                        getApplication(),
+                        "Added to favorites",
+                        Toast.LENGTH_SHORT,
+                    ).show()
+                }
+                is ManageFavoritesUseCase.AddFavoriteResult.AlreadyExists -> {
+                    Toast.makeText(
+                        getApplication(),
+                        "Already in favorites",
+                        Toast.LENGTH_SHORT,
+                    ).show()
+                }
+                is ManageFavoritesUseCase.AddFavoriteResult.LimitReached -> {
+                    Toast.makeText(
+                        getApplication(),
+                        "Maximum 5 favorites allowed",
+                        Toast.LENGTH_SHORT,
+                    ).show()
+                }
+                is ManageFavoritesUseCase.AddFavoriteResult.Error -> {
+                    Toast.makeText(
+                        getApplication(),
+                        "Failed to add favorite",
+                        Toast.LENGTH_SHORT,
+                    ).show()
+                }
+            }
+        }
+    }
+
+    /**
+     * Removes an app from favorites from context menu.
+     */
+    fun removeAppFromFavorites(app: App) {
+        viewModelScope.launch {
+            manageFavoritesUseCase.removeFromFavorites(app.packageName)
+            Toast.makeText(
+                getApplication(),
+                "Removed from favorites",
+                Toast.LENGTH_SHORT,
+            ).show()
+        }
+    }
+
+    /**
      * Opens the phone dialer app.
      */
     fun openPhoneDialer() {
@@ -309,6 +386,33 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                     "Clock app not available",
                     Toast.LENGTH_SHORT,
                 ).show()
+            }
+        }
+    }
+
+    /**
+     * Opens the Android system App Info screen for a given app.
+     */
+    fun openAppInfo(app: App) {
+        try {
+            val intent = createAppInfoIntent(app)
+            getApplication<Application>().startActivity(intent)
+        } catch (e: Exception) {
+            Toast.makeText(
+                getApplication(),
+                "Unable to open app info",
+                Toast.LENGTH_SHORT,
+            ).show()
+        }
+    }
+
+    companion object {
+        fun createAppInfoIntent(app: App): Intent {
+            return Intent(
+                android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                Uri.fromParts("package", app.packageName, null),
+            ).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
             }
         }
     }
