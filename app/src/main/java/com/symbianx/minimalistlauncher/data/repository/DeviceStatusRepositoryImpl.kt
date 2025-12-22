@@ -24,7 +24,7 @@ class DeviceStatusRepositoryImpl(
     /**
      * Calculates milliseconds until the next minute boundary for battery-efficient updates.
      */
-    private fun calculateDelayToNextMinute(now: LocalDateTime): Long {
+    internal fun calculateDelayToNextMinute(now: LocalDateTime): Long {
         // If we're exactly at a minute boundary, no delay needed
         if (now.second == 0 && now.nano == 0) {
             return 0
@@ -44,7 +44,7 @@ class DeviceStatusRepositoryImpl(
     /**
      * Calculates milliseconds until the next day boundary (midnight) for battery-efficient date updates.
      */
-    private fun calculateDelayToNextDay(now: LocalDateTime): Long {
+    internal fun calculateDelayToNextDay(now: LocalDateTime): Long {
         // If we're exactly at midnight, no delay needed
         if (now.hour == 0 && now.minute == 0 && now.second == 0 && now.nano == 0) {
             return 0
