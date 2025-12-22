@@ -22,7 +22,7 @@ class DeviceStatusRepositoryImpl(
             while (true) {
                 val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT, Locale.getDefault())
                 emit(timeFormat.format(Date()))
-                delay(60_000) // Update every minute
+                delay(1_000) // Update every second
             }
         }
 
