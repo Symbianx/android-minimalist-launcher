@@ -23,9 +23,18 @@ class DeviceStatusRepositoryImpl(
 
     private val timeFlow: Flow<String> =
         flow {
+            // Emit immediately for fresh display when UI becomes visible
+            val now = LocalDateTime.now()
+            emit(now.format(timeFormatter))
+            
+            // Calculate delay to next minute boundary for battery efficiency
+            val secondsUntilNextMinute = 60 - now.second
+            delay(secondsUntilNextMinute * 1_000L)
+            
+            // Then update every minute, aligned to minute changes
             while (true) {
                 emit(LocalDateTime.now().format(timeFormatter))
-                delay(1_000) // Update every second
+                delay(60_000) // Update every minute
             }
         }
 
