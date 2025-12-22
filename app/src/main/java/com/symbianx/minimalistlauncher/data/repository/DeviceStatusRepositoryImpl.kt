@@ -25,7 +25,7 @@ class DeviceStatusRepositoryImpl(
                 // Emit current time immediately
                 val now = Date()
                 emit(timeFormat.format(now))
-                
+
                 // Calculate delay until next minute change for battery optimization
                 // Using the same timestamp for consistency
                 val delayUntilNextMinute = calculateDelayUntilNextMinute()
@@ -40,7 +40,7 @@ class DeviceStatusRepositoryImpl(
                 // Emit current date immediately
                 val now = Date()
                 emit(dateFormat.format(now))
-                
+
                 // Calculate delay until next day change for battery optimization
                 // Using the same timestamp for consistency
                 val delayUntilNextDay = calculateDelayUntilNextDay()
@@ -70,11 +70,11 @@ class DeviceStatusRepositoryImpl(
         val now = Calendar.getInstance()
         val seconds = now.get(Calendar.SECOND)
         val milliseconds = now.get(Calendar.MILLISECOND)
-        
+
         // Calculate remaining time in current minute
         val remainingSeconds = 60 - seconds
         val remainingMillis = remainingSeconds * 1000L - milliseconds
-        
+
         // Ensure we always have a positive delay (minimum 100ms to avoid timing edge cases)
         return remainingMillis.coerceAtLeast(100L)
     }
@@ -92,9 +92,9 @@ class DeviceStatusRepositoryImpl(
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
         }
-        
+
         val delayMillis = tomorrow.timeInMillis - now.timeInMillis
-        
+
         // Ensure we always have a positive delay (minimum 1000ms to avoid timing edge cases)
         return delayMillis.coerceAtLeast(1000L)
     }

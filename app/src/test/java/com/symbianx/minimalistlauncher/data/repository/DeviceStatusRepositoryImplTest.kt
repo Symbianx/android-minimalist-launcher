@@ -46,10 +46,10 @@ class DeviceStatusRepositoryImplTest {
         val delay = repository.calculateDelayUntilNextMinute()
         val now = Calendar.getInstance()
         val currentSecond = now.get(Calendar.SECOND)
-        
+
         // Expected delay should be approximately (60 - currentSecond) seconds
         val expectedDelay = (60 - currentSecond) * 1000L
-        
+
         // Allow for execution time variance (within 1 second)
         assertTrue(
             "Delay $delay should be close to expected $expectedDelay",
@@ -87,9 +87,9 @@ class DeviceStatusRepositoryImplTest {
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
         }
-        
+
         val expectedDelay = tomorrow.timeInMillis - now.timeInMillis
-        
+
         // The calculated delay should match the expected delay
         assertTrue(
             "Delay $delay should be close to expected $expectedDelay",
@@ -100,13 +100,13 @@ class DeviceStatusRepositoryImplTest {
     @Test
     fun `observeDeviceStatus emits device status with time and date`() = runTest {
         val deviceStatus = repository.observeDeviceStatus().first()
-        
+
         // Verify that time is not empty
         assertTrue("Time should not be empty", deviceStatus.currentTime.isNotEmpty())
-        
+
         // Verify that date is not empty
         assertTrue("Date should not be empty", deviceStatus.currentDate.isNotEmpty())
-        
+
         // Verify battery status from mock
         assertEquals(85, deviceStatus.batteryPercentage)
         assertEquals(false, deviceStatus.isCharging)
@@ -119,9 +119,9 @@ class DeviceStatusRepositoryImplTest {
             override fun observeBatteryStatus() = flowOf(Pair(42, true))
         }
         val customRepository = DeviceStatusRepositoryImpl(customBatteryDataSource)
-        
+
         val deviceStatus = customRepository.observeDeviceStatus().first()
-        
+
         // Verify battery data is correctly combined
         assertEquals(42, deviceStatus.batteryPercentage)
         assertEquals(true, deviceStatus.isCharging)
