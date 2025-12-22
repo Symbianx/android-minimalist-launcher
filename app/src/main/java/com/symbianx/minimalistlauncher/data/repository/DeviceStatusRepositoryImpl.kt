@@ -31,7 +31,7 @@ class DeviceStatusRepositoryImpl(
             while (true) {
                 val dateFormat = SimpleDateFormat("EEE, MMM dd", Locale.getDefault())
                 emit(dateFormat.format(Date()))
-                delay(1_000) // Update every second to keep in sync with time
+                delay(60_000) // Update every minute - dates don't change frequently
             }
         }
 
