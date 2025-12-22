@@ -16,9 +16,10 @@ class DeviceStatusRepositoryImplTest {
 
     @Before
     fun setup() {
-        mockBatteryDataSource = object : BatteryDataSource {
-            override fun observeBatteryStatus() = flowOf(Pair(85, false))
-        }
+        mockBatteryDataSource =
+            object : BatteryDataSource {
+                override fun observeBatteryStatus() = flowOf(Pair(85, false))
+            }
         repository = DeviceStatusRepositoryImpl(mockBatteryDataSource)
     }
 
@@ -53,7 +54,7 @@ class DeviceStatusRepositoryImplTest {
         // Allow for execution time variance (within 1 second)
         assertTrue(
             "Delay $delay should be close to expected $expectedDelay",
-            kotlin.math.abs(delay - expectedDelay) < 1000
+            kotlin.math.abs(delay - expectedDelay) < 1000,
         )
     }
 
@@ -80,50 +81,54 @@ class DeviceStatusRepositoryImplTest {
     fun `calculateDelayUntilNextDay at 11 59 PM returns approximately 1 minute`() {
         val delay = repository.calculateDelayUntilNextDay()
         val now = Calendar.getInstance()
-        val tomorrow = Calendar.getInstance().apply {
-            add(Calendar.DAY_OF_YEAR, 1)
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }
+        val tomorrow =
+            Calendar.getInstance().apply {
+                add(Calendar.DAY_OF_YEAR, 1)
+                set(Calendar.HOUR_OF_DAY, 0)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }
 
         val expectedDelay = tomorrow.timeInMillis - now.timeInMillis
 
         // The calculated delay should match the expected delay
         assertTrue(
             "Delay $delay should be close to expected $expectedDelay",
-            kotlin.math.abs(delay - expectedDelay) < 1000
+            kotlin.math.abs(delay - expectedDelay) < 1000,
         )
     }
 
     @Test
-    fun `observeDeviceStatus emits device status with time and date`() = runTest {
-        val deviceStatus = repository.observeDeviceStatus().first()
+    fun `observeDeviceStatus emits device status with time and date`() =
+        runTest {
+            val deviceStatus = repository.observeDeviceStatus().first()
 
-        // Verify that time is not empty
-        assertTrue("Time should not be empty", deviceStatus.currentTime.isNotEmpty())
+            // Verify that time is not empty
+            assertTrue("Time should not be empty", deviceStatus.currentTime.isNotEmpty())
 
-        // Verify that date is not empty
-        assertTrue("Date should not be empty", deviceStatus.currentDate.isNotEmpty())
+            // Verify that date is not empty
+            assertTrue("Date should not be empty", deviceStatus.currentDate.isNotEmpty())
 
-        // Verify battery status from mock
-        assertEquals(85, deviceStatus.batteryPercentage)
-        assertEquals(false, deviceStatus.isCharging)
-    }
+            // Verify battery status from mock
+            assertEquals(85, deviceStatus.batteryPercentage)
+            assertEquals(false, deviceStatus.isCharging)
+        }
 
     @Test
-    fun `observeDeviceStatus combines battery data correctly`() = runTest {
-        // Create repository with different battery status
-        val customBatteryDataSource = object : BatteryDataSource {
-            override fun observeBatteryStatus() = flowOf(Pair(42, true))
+    fun `observeDeviceStatus combines battery data correctly`() =
+        runTest {
+            // Create repository with different battery status
+            val customBatteryDataSource =
+                object : BatteryDataSource {
+                    override fun observeBatteryStatus() = flowOf(Pair(42, true))
+                }
+            val customRepository = DeviceStatusRepositoryImpl(customBatteryDataSource)
+
+            val deviceStatus = customRepository.observeDeviceStatus().first()
+
+            // Verify battery data is correctly combined
+            assertEquals(42, deviceStatus.batteryPercentage)
+            assertEquals(true, deviceStatus.isCharging)
         }
-        val customRepository = DeviceStatusRepositoryImpl(customBatteryDataSource)
-
-        val deviceStatus = customRepository.observeDeviceStatus().first()
-
-        // Verify battery data is correctly combined
-        assertEquals(42, deviceStatus.batteryPercentage)
-        assertEquals(true, deviceStatus.isCharging)
-    }
 }
