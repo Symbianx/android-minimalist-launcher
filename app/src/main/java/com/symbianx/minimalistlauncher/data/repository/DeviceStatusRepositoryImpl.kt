@@ -21,6 +21,20 @@ class DeviceStatusRepositoryImpl(
     private val timeFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(Locale.getDefault())
     private val dateFormatter = DateTimeFormatter.ofPattern("EEE, MMM dd", Locale.getDefault())
 
+    /**
+     * Calculates milliseconds until the next minute boundary for battery-efficient updates.
+     */
+    private fun calculateDelayToNextMinute(now: LocalDateTime): Long {
+        // If we're exactly at a minute boundary, no delay needed
+        if (now.second == 0 && now.nano == 0) {
+            return 0
+        }
+        
+        val secondsUntilNextMinute = 60 - now.second
+        val nanosUntilNextMinute = 1_000_000_000 - now.nano
+        return (secondsUntilNextMinute - 1) * 1_000L + nanosUntilNextMinute / 1_000_000L
+    }
+
     private val timeFlow: Flow<String> =
         flow {
             // Emit immediately for fresh display when UI becomes visible
@@ -28,11 +42,10 @@ class DeviceStatusRepositoryImpl(
             emit(now.format(timeFormatter))
             
             // Calculate delay to next minute boundary for battery efficiency
-            // Account for nanoseconds to ensure we don't update before the boundary
-            val secondsUntilNextMinute = 60 - now.second
-            val nanosUntilNextMinute = 1_000_000_000 - now.nano
-            val millisUntilNextMinute = (secondsUntilNextMinute - 1) * 1_000L + nanosUntilNextMinute / 1_000_000L
-            delay(millisUntilNextMinute)
+            val delayMillis = calculateDelayToNextMinute(now)
+            if (delayMillis > 0) {
+                delay(delayMillis)
+            }
             
             // Then update every minute, aligned to minute changes
             while (true) {
@@ -48,10 +61,10 @@ class DeviceStatusRepositoryImpl(
             emit(now.format(dateFormatter))
             
             // Calculate delay to next minute boundary for consistency
-            val secondsUntilNextMinute = 60 - now.second
-            val nanosUntilNextMinute = 1_000_000_000 - now.nano
-            val millisUntilNextMinute = (secondsUntilNextMinute - 1) * 1_000L + nanosUntilNextMinute / 1_000_000L
-            delay(millisUntilNextMinute)
+            val delayMillis = calculateDelayToNextMinute(now)
+            if (delayMillis > 0) {
+                delay(delayMillis)
+            }
             
             // Then update every minute, aligned to minute changes
             while (true) {
