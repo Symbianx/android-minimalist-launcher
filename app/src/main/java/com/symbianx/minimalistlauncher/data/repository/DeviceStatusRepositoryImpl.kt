@@ -35,6 +35,16 @@ class DeviceStatusRepositoryImpl(
         return (secondsUntilNextMinute - 1) * 1_000L + nanosUntilNextMinute / 1_000_000L
     }
 
+    /**
+     * Calculates milliseconds until the next day boundary (midnight) for battery-efficient date updates.
+     */
+    private fun calculateDelayToNextDay(now: LocalDateTime): Long {
+        // Calculate time until midnight (00:00:00.000)
+        val secondsUntilMidnight = (23 - now.hour) * 3600L + (59 - now.minute) * 60L + (60 - now.second)
+        val nanosUntilMidnight = 1_000_000_000 - now.nano
+        return (secondsUntilMidnight - 1) * 1_000L + nanosUntilMidnight / 1_000_000L
+    }
+
     private val timeFlow: Flow<String> =
         flow {
             // Emit immediately for fresh display when UI becomes visible
@@ -60,16 +70,16 @@ class DeviceStatusRepositoryImpl(
             val now = LocalDateTime.now()
             emit(now.format(dateFormatter))
             
-            // Calculate delay to next minute boundary for consistency
-            val delayMillis = calculateDelayToNextMinute(now)
+            // Calculate delay to next day boundary for battery efficiency
+            val delayMillis = calculateDelayToNextDay(now)
             if (delayMillis > 0) {
                 delay(delayMillis)
             }
             
-            // Then update every minute, aligned to minute changes
+            // Then update every day, aligned to midnight
             while (true) {
                 emit(LocalDateTime.now().format(dateFormatter))
-                delay(60_000) // Update every minute
+                delay(86_400_000) // Update every 24 hours
             }
         }
 
