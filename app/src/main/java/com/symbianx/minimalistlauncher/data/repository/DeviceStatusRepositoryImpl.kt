@@ -31,8 +31,14 @@ class DeviceStatusRepositoryImpl(
         }
         
         val secondsUntilNextMinute = 60 - now.second
-        val nanosRemaining = if (now.nano == 0) 0L else (1_000_000_000 - now.nano)
-        return (secondsUntilNextMinute - 1) * 1_000L + nanosRemaining / 1_000_000L
+        if (now.nano == 0) {
+            // Exactly at a second boundary
+            return secondsUntilNextMinute * 1_000L
+        } else {
+            // Partway through a second
+            val nanosRemaining = 1_000_000_000 - now.nano
+            return (secondsUntilNextMinute - 1) * 1_000L + nanosRemaining / 1_000_000L
+        }
     }
 
     /**
@@ -47,8 +53,14 @@ class DeviceStatusRepositoryImpl(
         // Calculate time until next midnight (00:00:00.000)
         val secondsInDay = now.hour * 3600L + now.minute * 60L + now.second
         val secondsUntilMidnight = 86400L - secondsInDay
-        val nanosRemaining = if (now.nano == 0) 0L else (1_000_000_000 - now.nano)
-        return (secondsUntilMidnight - 1) * 1_000L + nanosRemaining / 1_000_000L
+        if (now.nano == 0) {
+            // Exactly at a second boundary
+            return secondsUntilMidnight * 1_000L
+        } else {
+            // Partway through a second
+            val nanosRemaining = 1_000_000_000 - now.nano
+            return (secondsUntilMidnight - 1) * 1_000L + nanosRemaining / 1_000_000L
+        }
     }
 
     private val timeFlow: Flow<String> =
