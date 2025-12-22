@@ -23,9 +23,11 @@ class DeviceStatusRepositoryImpl(
             val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT, Locale.getDefault())
             while (true) {
                 // Emit current time immediately
-                emit(timeFormat.format(Date()))
+                val now = Date()
+                emit(timeFormat.format(now))
                 
                 // Calculate delay until next minute change for battery optimization
+                // Using the same timestamp for consistency
                 val delayUntilNextMinute = calculateDelayUntilNextMinute()
                 delay(delayUntilNextMinute)
             }
@@ -36,9 +38,11 @@ class DeviceStatusRepositoryImpl(
             val dateFormat = SimpleDateFormat("EEE, MMM dd", Locale.getDefault())
             while (true) {
                 // Emit current date immediately
-                emit(dateFormat.format(Date()))
+                val now = Date()
+                emit(dateFormat.format(now))
                 
                 // Calculate delay until next day change for battery optimization
+                // Using the same timestamp for consistency
                 val delayUntilNextDay = calculateDelayUntilNextDay()
                 delay(delayUntilNextDay)
             }
