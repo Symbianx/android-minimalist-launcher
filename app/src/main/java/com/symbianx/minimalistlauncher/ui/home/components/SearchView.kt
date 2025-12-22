@@ -20,7 +20,9 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -52,15 +54,16 @@ import kotlinx.coroutines.delay
  */
 @Composable
 fun SearchView(
-    modifier: Modifier = Modifier,
     searchState: SearchState,
     onQueryChange: (String) -> Unit,
     onAppClick: (App) -> Unit,
+    modifier: Modifier = Modifier,
     onAppLongPress: (App) -> Unit = {},
     onSwipeBack: () -> Unit = {},
     autoLaunchEnabled: Boolean = true,
     autoLaunchDelayMs: Long = 300,
 ) {
+    val currentOnAppClick by rememberUpdatedState(onAppClick)
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -155,7 +158,7 @@ fun SearchView(
                     items(searchState.results) { app ->
                         AppListItem(
                             app = app,
-                            onClick = onAppClick,
+                            onClick = currentOnAppClick,
                             onLongClick = onAppLongPress,
                         )
                     }
@@ -179,7 +182,7 @@ fun SearchView(
                 if (AutoLaunchDecider.isEligible(autoLaunchEnabled, searchState)) {
                     // Provide brief haptic feedback before launching
                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                    onAppClick(searchState.results.first())
+                    currentOnAppClick(searchState.results.first())
                 }
             }
         }

@@ -31,8 +31,8 @@ import com.symbianx.minimalistlauncher.ui.home.components.isPixel8Pro
  */
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = viewModel(),
     modifier: Modifier = Modifier,
+    viewModel: HomeViewModel = viewModel(),
 ) {
     val searchState by viewModel.searchState.collectAsState()
     val deviceStatus by viewModel.deviceStatus.collectAsState()
