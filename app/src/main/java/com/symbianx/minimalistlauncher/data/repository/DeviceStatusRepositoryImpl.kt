@@ -7,8 +7,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
-import java.text.SimpleDateFormat
-import java.util.Date
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.util.Locale
 
 /**
@@ -17,13 +18,13 @@ import java.util.Locale
 class DeviceStatusRepositoryImpl(
     private val batteryDataSource: BatteryDataSource,
 ) : DeviceStatusRepository {
-    private val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT, Locale.getDefault())
-    private val dateFormat = SimpleDateFormat("EEE, MMM dd", Locale.getDefault())
+    private val timeFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(Locale.getDefault())
+    private val dateFormatter = DateTimeFormatter.ofPattern("EEE, MMM dd", Locale.getDefault())
 
     private val timeFlow: Flow<String> =
         flow {
             while (true) {
-                emit(timeFormat.format(Date()))
+                emit(LocalDateTime.now().format(timeFormatter))
                 delay(1_000) // Update every second
             }
         }
@@ -31,7 +32,7 @@ class DeviceStatusRepositoryImpl(
     private val dateFlow: Flow<String> =
         flow {
             while (true) {
-                emit(dateFormat.format(Date()))
+                emit(LocalDateTime.now().format(dateFormatter))
                 delay(60_000) // Update every minute
             }
         }
