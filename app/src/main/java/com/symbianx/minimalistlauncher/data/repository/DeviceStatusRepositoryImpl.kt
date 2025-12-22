@@ -28,8 +28,11 @@ class DeviceStatusRepositoryImpl(
             emit(now.format(timeFormatter))
             
             // Calculate delay to next minute boundary for battery efficiency
+            // Account for nanoseconds to ensure we don't update before the boundary
             val secondsUntilNextMinute = 60 - now.second
-            delay(secondsUntilNextMinute * 1_000L)
+            val nanosUntilNextMinute = 1_000_000_000 - now.nano
+            val millisUntilNextMinute = (secondsUntilNextMinute - 1) * 1_000L + nanosUntilNextMinute / 1_000_000L
+            delay(millisUntilNextMinute)
             
             // Then update every minute, aligned to minute changes
             while (true) {
@@ -40,6 +43,17 @@ class DeviceStatusRepositoryImpl(
 
     private val dateFlow: Flow<String> =
         flow {
+            // Emit immediately for fresh display when UI becomes visible
+            val now = LocalDateTime.now()
+            emit(now.format(dateFormatter))
+            
+            // Calculate delay to next minute boundary for consistency
+            val secondsUntilNextMinute = 60 - now.second
+            val nanosUntilNextMinute = 1_000_000_000 - now.nano
+            val millisUntilNextMinute = (secondsUntilNextMinute - 1) * 1_000L + nanosUntilNextMinute / 1_000_000L
+            delay(millisUntilNextMinute)
+            
+            // Then update every minute, aligned to minute changes
             while (true) {
                 emit(LocalDateTime.now().format(dateFormatter))
                 delay(60_000) // Update every minute
