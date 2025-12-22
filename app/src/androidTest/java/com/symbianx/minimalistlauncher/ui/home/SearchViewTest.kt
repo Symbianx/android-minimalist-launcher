@@ -1,22 +1,22 @@
 package com.symbianx.minimalistlauncher.ui.home
 
+import android.content.Intent
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.assertIsNotFocused
+import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeRight
 import androidx.compose.ui.test.swipeUp
-import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import android.content.Intent
 import com.symbianx.minimalistlauncher.domain.model.App
 import com.symbianx.minimalistlauncher.domain.model.SearchState
 import com.symbianx.minimalistlauncher.ui.home.components.SearchView
-import org.junit.Assert.assertTrue
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -30,13 +30,14 @@ class SearchViewTest {
     fun autoLaunch_whenSingleResult_and300msPause_triggersLaunch() {
         composeTestRule.mainClock.autoAdvance = false
         var launched = false
-        val singleApp = listOf(
-            App(
-                packageName = "com.google.android.apps.maps",
-                label = "Maps",
-                launchIntent = Intent(Intent.ACTION_MAIN).apply { `package` = "com.google.android.apps.maps" },
-            ),
-        )
+        val singleApp =
+            listOf(
+                App(
+                    packageName = "com.google.android.apps.maps",
+                    label = "Maps",
+                    launchIntent = Intent(Intent.ACTION_MAIN).apply { `package` = "com.google.android.apps.maps" },
+                ),
+            )
 
         composeTestRule.setContent {
             val state = remember { mutableStateOf(SearchState(isActive = true, query = "Maps", results = singleApp)) }
@@ -59,18 +60,19 @@ class SearchViewTest {
     fun autoLaunch_doesNotTrigger_whenMultipleResults() {
         composeTestRule.mainClock.autoAdvance = false
         var launched = false
-        val apps = listOf(
-            App(
-                packageName = "com.android.camera",
-                label = "Camera",
-                launchIntent = Intent(Intent.ACTION_MAIN).apply { `package` = "com.android.camera" },
-            ),
-            App(
-                packageName = "com.google.android.calendar",
-                label = "Calendar",
-                launchIntent = Intent(Intent.ACTION_MAIN).apply { `package` = "com.google.android.calendar" },
-            ),
-        )
+        val apps =
+            listOf(
+                App(
+                    packageName = "com.android.camera",
+                    label = "Camera",
+                    launchIntent = Intent(Intent.ACTION_MAIN).apply { `package` = "com.android.camera" },
+                ),
+                App(
+                    packageName = "com.google.android.calendar",
+                    label = "Calendar",
+                    launchIntent = Intent(Intent.ACTION_MAIN).apply { `package` = "com.google.android.calendar" },
+                ),
+            )
 
         composeTestRule.setContent {
             val state = remember { mutableStateOf(SearchState(isActive = true, query = "ca", results = apps)) }
@@ -92,13 +94,14 @@ class SearchViewTest {
     fun autoLaunch_cancels_whenQueryChanges_beforeDelay() {
         composeTestRule.mainClock.autoAdvance = false
         var launched = false
-        val singleApp = listOf(
-            App(
-                packageName = "com.google.android.apps.maps",
-                label = "Maps",
-                launchIntent = Intent(Intent.ACTION_MAIN).apply { `package` = "com.google.android.apps.maps" },
-            ),
-        )
+        val singleApp =
+            listOf(
+                App(
+                    packageName = "com.google.android.apps.maps",
+                    label = "Maps",
+                    launchIntent = Intent(Intent.ACTION_MAIN).apply { `package` = "com.google.android.apps.maps" },
+                ),
+            )
 
         lateinit var stateHolder: androidx.compose.runtime.MutableState<SearchState>
 
@@ -127,13 +130,14 @@ class SearchViewTest {
     @Test
     fun swipeBack_returnToHome() {
         var swipedBack = false
-        val singleApp = listOf(
-            App(
-                packageName = "com.google.android.apps.maps",
-                label = "Maps",
-                launchIntent = Intent(Intent.ACTION_MAIN).apply { `package` = "com.google.android.apps.maps" },
-            ),
-        )
+        val singleApp =
+            listOf(
+                App(
+                    packageName = "com.google.android.apps.maps",
+                    label = "Maps",
+                    launchIntent = Intent(Intent.ACTION_MAIN).apply { `package` = "com.google.android.apps.maps" },
+                ),
+            )
 
         composeTestRule.setContent {
             val state = remember { mutableStateOf(SearchState(isActive = true, query = "Maps", results = singleApp)) }
@@ -158,13 +162,14 @@ class SearchViewTest {
     @Test
     fun keyboardDismiss_onScroll_clearsFocus() {
         // Prepare a list with enough items to allow scrolling
-        val apps = (1..50).map { idx ->
-            App(
-                packageName = "com.example.app$idx",
-                label = "Example App $idx",
-                launchIntent = Intent(Intent.ACTION_MAIN).apply { `package` = "com.example.app$idx" },
-            )
-        }
+        val apps =
+            (1..50).map { idx ->
+                App(
+                    packageName = "com.example.app$idx",
+                    label = "Example App $idx",
+                    launchIntent = Intent(Intent.ACTION_MAIN).apply { `package` = "com.example.app$idx" },
+                )
+            }
 
         composeTestRule.setContent {
             val state = remember { mutableStateOf(SearchState(isActive = true, query = "ex", results = apps)) }
@@ -187,5 +192,4 @@ class SearchViewTest {
         // Verify the text field is no longer focused
         composeTestRule.onNodeWithContentDescription("Search apps").assertIsNotFocused()
     }
-
 }

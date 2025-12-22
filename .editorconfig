@@ -1,8 +1,2 @@
 [*.{kt,kts}]
-# Jetpack Compose requires functions to start with uppercase
-ktlint_function-naming = disabled
-ktlint_property-naming = disabled
-
-# Allow inline comments in Compose code
-ktlint_discouraged-comment-location = disabled
-
+ktlint_function_naming_ignore_when_annotated_with=Composable

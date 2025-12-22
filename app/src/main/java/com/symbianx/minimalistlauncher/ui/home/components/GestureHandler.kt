@@ -5,7 +5,7 @@ import android.content.Intent
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -35,10 +35,10 @@ fun GestureHandler(
     val density = LocalDensity.current
     val swipeThreshold = with(density) { 50.dp.toPx() } // Reduced from 100dp for faster activation
 
-    var dragStartX by remember { mutableStateOf(0f) }
-    var dragStartY by remember { mutableStateOf(0f) }
-    var totalDragX by remember { mutableStateOf(0f) }
-    var totalDragY by remember { mutableStateOf(0f) }
+    var dragStartX by remember { mutableFloatStateOf(0f) }
+    var dragStartY by remember { mutableFloatStateOf(0f) }
+    var totalDragX by remember { mutableFloatStateOf(0f) }
+    var totalDragY by remember { mutableFloatStateOf(0f) }
 
     androidx.compose.foundation.layout.Box(
         modifier =

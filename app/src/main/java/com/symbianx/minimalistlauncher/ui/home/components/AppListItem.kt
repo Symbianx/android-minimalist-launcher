@@ -48,8 +48,7 @@ fun AppListItem(
                     },
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() },
-                )
-                .padding(vertical = 20.dp, horizontal = 8.dp),
+                ).padding(vertical = 20.dp, horizontal = 8.dp),
         style = MaterialTheme.typography.headlineSmall,
     )
 }

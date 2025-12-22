@@ -9,8 +9,8 @@ import com.symbianx.minimalistlauncher.domain.model.App
 class LaunchAppUseCaseImpl(
     private val context: Context,
 ) : LaunchAppUseCase {
-    override fun execute(app: App): Boolean {
-        return try {
+    override fun execute(app: App): Boolean =
+        try {
             context.startActivity(
                 app.launchIntent.apply {
                     addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -20,5 +20,4 @@ class LaunchAppUseCaseImpl(
         } catch (e: Exception) {
             false
         }
-    }
 }

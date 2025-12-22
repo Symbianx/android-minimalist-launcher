@@ -31,18 +31,22 @@ android {
             // Uses default debug keystore
             // Location: ~/.android/debug.keystore
         }
-        
+
         create("release") {
             // Use injected signing config from CI/CD or local.properties
-            val injectedKeystore: String? = System.getenv("SIGNING_KEYSTORE_PATH")
-                ?: project.findProperty("android.injected.signing.store.file") as String?
-            val injectedStorePassword: String? = System.getenv("SIGNING_KEYSTORE_PASSWORD")
-                ?: project.findProperty("android.injected.signing.store.password") as String?
-            val injectedKeyAlias: String? = System.getenv("SIGNING_KEY_ALIAS")
-                ?: project.findProperty("android.injected.signing.key.alias") as String?
-            val injectedKeyPassword: String? = System.getenv("SIGNING_KEY_PASSWORD")
-                ?: project.findProperty("android.injected.signing.key.password") as String?
-            
+            val injectedKeystore: String? =
+                System.getenv("SIGNING_KEYSTORE_PATH")
+                    ?: project.findProperty("android.injected.signing.store.file") as String?
+            val injectedStorePassword: String? =
+                System.getenv("SIGNING_KEYSTORE_PASSWORD")
+                    ?: project.findProperty("android.injected.signing.store.password") as String?
+            val injectedKeyAlias: String? =
+                System.getenv("SIGNING_KEY_ALIAS")
+                    ?: project.findProperty("android.injected.signing.key.alias") as String?
+            val injectedKeyPassword: String? =
+                System.getenv("SIGNING_KEY_PASSWORD")
+                    ?: project.findProperty("android.injected.signing.key.password") as String?
+
             if (injectedKeystore != null) {
                 storeFile = file(injectedKeystore)
                 storePassword = injectedStorePassword
@@ -123,19 +127,13 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     debugImplementation("com.squareup.leakcanary:leakcanary-android:2.14")
+
+    ktlintRuleset("io.nlopez.compose.rules:ktlint:0.5.3")
 }
 
 ktlint {
     android.set(true)
     ignoreFailures.set(false)
-    disabledRules.set(
-        setOf(
-            // Allow Compose function names to start with uppercase
-            "standard:function-naming",
-            // Allow Compose state property names
-            "standard:property-naming",
-        ),
-    )
 }
 
 jacoco {
@@ -151,46 +149,50 @@ tasks.register<JacocoReport>("jacocoTestReport") {
         csv.required.set(false)
     }
 
-    val fileFilter = listOf(
-        "**/R.class",
-        "**/R$*.class",
-        "**/BuildConfig.*",
-        "**/Manifest*.*",
-        "**/*Test*.*",
-        "android/**/*.*",
-        "**/*\$ViewInjector*.*",
-        "**/*\$ViewBinder*.*",
-        "**/Lambda$*.class",
-        "**/Lambda.class",
-        "**/*Lambda.class",
-        "**/*Lambda*.class",
-        "**/*_MembersInjector.class",
-        "**/Dagger*Component*.*",
-        "**/*Module_*Factory.class",
-        "**/di/**",
-        "**/*_Factory*.*",
-        "**/*Module*.*",
-        "**/*Dagger*.*",
-        "**/*Hilt*.*",
-        "**/hilt_aggregated_deps/**",
-        "**/*_HiltModules*.*",
-        "**/*_Impl*.*",
-        "**/*Theme*.*",
-        "**/*Activity*.*",
-        "**/*MainActivity*.*",
-    )
+    val fileFilter =
+        listOf(
+            "**/R.class",
+            "**/R$*.class",
+            "**/BuildConfig.*",
+            "**/Manifest*.*",
+            "**/*Test*.*",
+            "android/**/*.*",
+            "**/*\$ViewInjector*.*",
+            "**/*\$ViewBinder*.*",
+            "**/Lambda$*.class",
+            "**/Lambda.class",
+            "**/*Lambda.class",
+            "**/*Lambda*.class",
+            "**/*_MembersInjector.class",
+            "**/Dagger*Component*.*",
+            "**/*Module_*Factory.class",
+            "**/di/**",
+            "**/*_Factory*.*",
+            "**/*Module*.*",
+            "**/*Dagger*.*",
+            "**/*Hilt*.*",
+            "**/hilt_aggregated_deps/**",
+            "**/*_HiltModules*.*",
+            "**/*_Impl*.*",
+            "**/*Theme*.*",
+            "**/*Activity*.*",
+            "**/*MainActivity*.*",
+        )
 
-    val debugTree = fileTree("${project.buildDir}/tmp/kotlin-classes/debug") {
-        exclude(fileFilter)
-    }
+    val debugTree =
+        fileTree("${project.layout.buildDirectory}/tmp/kotlin-classes/debug") {
+            exclude(fileFilter)
+        }
 
     val mainSrc = "${project.projectDir}/src/main/java"
 
     sourceDirectories.setFrom(files(mainSrc))
     classDirectories.setFrom(files(debugTree))
-    executionData.setFrom(fileTree(project.buildDir) {
-        include("jacoco/testDebugUnitTest.exec")
-    })
+    executionData.setFrom(
+        fileTree(project.layout.buildDirectory) {
+            include("jacoco/testDebugUnitTest.exec")
+        },
+    )
 }
 
 tasks.withType<Test> {

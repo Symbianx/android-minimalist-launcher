@@ -53,9 +53,10 @@ fun StatusBar(
                     text = "${deviceStatus.batteryPercentage}%",
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
-                    modifier = Modifier.semantics {
-                        contentDescription = "Battery percentage"
-                    },
+                    modifier =
+                        Modifier.semantics {
+                            contentDescription = "Battery percentage"
+                        },
                 )
 
                 if (deviceStatus.isCharging) {
@@ -72,26 +73,27 @@ fun StatusBar(
         val isClockPressed by clockInteractionSource.collectIsPressedAsState()
         val clockScale by animateFloatAsState(
             targetValue = if (isClockPressed) 0.95f else 1f,
-            label = "clockScale"
+            label = "clockScale",
         )
         Column(
-            modifier = Modifier
-                .scale(clockScale)
-                .clickable(
-                    interactionSource = clockInteractionSource,
-                    indication = null,
-                    onClick = onClockTap
-                )
-                .padding(8.dp),
+            modifier =
+                Modifier
+                    .scale(clockScale)
+                    .clickable(
+                        interactionSource = clockInteractionSource,
+                        indication = null,
+                        onClick = onClockTap,
+                    ).padding(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
                 text = deviceStatus.currentTime,
                 style = MaterialTheme.typography.displayLarge,
                 color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier.semantics {
-                    contentDescription = "Current time"
-                },
+                modifier =
+                    Modifier.semantics {
+                        contentDescription = "Current time"
+                    },
             )
 
             // Date BELOW time
@@ -99,9 +101,10 @@ fun StatusBar(
                 text = deviceStatus.currentDate,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
-                modifier = Modifier.semantics {
-                    contentDescription = "Current date"
-                },
+                modifier =
+                    Modifier.semantics {
+                        contentDescription = "Current date"
+                    },
             )
         }
     }

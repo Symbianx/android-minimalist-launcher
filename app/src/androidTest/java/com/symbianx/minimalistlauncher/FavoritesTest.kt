@@ -1,7 +1,6 @@
 package com.symbianx.minimalistlauncher
 
 import android.content.Context
-import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -182,7 +181,7 @@ class FavoritesTest {
      * 3. Create NEW repository instance (simulating app restart)
      * 4. Verify favorite loads from SharedPreferences
      * 5. Remove favorite from new repository
-     * 6. Create ANOTHER new repository instance  
+     * 6. Create ANOTHER new repository instance
      * 7. Verify removal persisted
      *
      * This tests the actual persistence layer without relying on UI state synchronization.
@@ -198,33 +197,33 @@ class FavoritesTest {
                     launchIntent = context.packageManager.getLaunchIntentForPackage("com.android.settings")!!,
                     isSystemApp = false,
                 )
-            
+
             val result = favoritesRepository.addFavorite(testApp)
             assert(result) { "Failed to add Settings to favorites" }
 
             // === STEP 2: Verify persistence - Create new repository ===
             val repo2 = FavoritesRepositoryImpl(FavoritesDataSourceImpl(context))
             repo2.initialize()
-            
+
             val isFavorite2 = repo2.isFavorite("com.android.settings")
             assert(isFavorite2) { "Settings should be favorite in new repository instance (persistence test)" }
-            
+
             val count2 = repo2.getFavoriteCount()
             assert(count2 == 1) { "Expected 1 favorite in new repository, got $count2" }
 
             // === STEP 3: Remove favorite from new repository ===
             repo2.removeFavorite("com.android.settings")
-            
+
             val isFavorite3 = repo2.isFavorite("com.android.settings")
             assert(!isFavorite3) { "Settings should not be favorite after removal" }
 
             // === STEP 4: Verify removal persisted - Create another new repository ===
             val repo3 = FavoritesRepositoryImpl(FavoritesDataSourceImpl(context))
             repo3.initialize()
-            
+
             val isFavorite4 = repo3.isFavorite("com.android.settings")
             assert(!isFavorite4) { "Settings should not be favorite in third repository (deletion persistence test)" }
-            
+
             val count3 = repo3.getFavoriteCount()
             assert(count3 == 0) { "Expected 0 favorites in third repository, got $count3" }
         }
@@ -233,22 +232,22 @@ class FavoritesTest {
 
 /*
  * NOTE ON E2E UI TESTING:
- * 
+ *
  * The tests above validate repository-level persistence which is the core functionality.
  * Full E2E tests that add favorites via UI gestures (swipe → search → long-press)
  * and verify immediate UI updates require either:
- * 
+ *
  * 1. Dependency Injection (Hilt/Dagger) to share repository instances between test and app
  * 2. Manual testing (which has been verified to work correctly)
  * 3. UI automation tools like Appium that test the installed APK
- * 
+ *
  * The current test architecture creates separate repository instances for tests,
  * which cannot synchronize with the ViewModel's repository instance that's observing
  * the StateFlow. This is a known limitation of the test setup, not a bug in the app.
- * 
+ *
  * All manual testing confirms the full E2E flow works correctly:
  * - Swipe to search → works
- * - Long-press to add favorite → works  
+ * - Long-press to add favorite → works
  * - Favorite appears on home screen → works
  * - App restart → favorite persists → works
  * - Long-press to remove → works

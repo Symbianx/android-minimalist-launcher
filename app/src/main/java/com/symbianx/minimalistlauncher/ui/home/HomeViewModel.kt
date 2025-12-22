@@ -2,8 +2,8 @@ package com.symbianx.minimalistlauncher.ui.home
 
 import android.app.Application
 import android.content.Intent
-import android.widget.Toast
 import android.net.Uri
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.symbianx.minimalistlauncher.data.local.FavoritesDataSourceImpl
@@ -31,7 +31,9 @@ import kotlinx.coroutines.launch
 /**
  * ViewModel for the home screen, managing app search and launch functionality.
  */
-class HomeViewModel(application: Application) : AndroidViewModel(application) {
+class HomeViewModel(
+    application: Application,
+) : AndroidViewModel(application) {
     private val appRepository =
         AppRepositoryImpl(
             AppListDataSourceImpl(application.applicationContext),
@@ -60,14 +62,15 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     val autoLaunchEnabled: Boolean = true
     val autoLaunchDelayMs: Long = 300L
 
-    private val _searchQuery = MutableStateFlow("")
-    private val _isSearchActive = MutableStateFlow(false)
+    private val searchQuery = MutableStateFlow("")
+    private val isSearchActive = MutableStateFlow(false)
     private val _contextMenuApp = MutableStateFlow<App?>(null)
 
     val contextMenuApp: StateFlow<App?> = _contextMenuApp
 
     private val allApps: StateFlow<List<App>> =
-        appRepository.getApps()
+        appRepository
+            .getApps()
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
@@ -76,8 +79,8 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
     val searchState: StateFlow<SearchState> =
         combine(
-            _isSearchActive,
-            _searchQuery,
+            isSearchActive,
+            searchQuery,
             allApps,
         ) { isActive, query, apps ->
             SearchState(
@@ -97,7 +100,8 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         )
 
     val deviceStatus: StateFlow<DeviceStatus> =
-        deviceStatusRepository.observeDeviceStatus()
+        deviceStatusRepository
+            .observeDeviceStatus()
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
@@ -105,7 +109,8 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             )
 
     val favorites: StateFlow<List<FavoriteApp>> =
-        manageFavoritesUseCase.observeFavorites()
+        manageFavoritesUseCase
+            .observeFavorites()
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
@@ -125,22 +130,22 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
      * Activates search mode.
      */
     fun activateSearch() {
-        _isSearchActive.value = true
+        isSearchActive.value = true
     }
 
     /**
      * Deactivates search mode and clears query.
      */
     fun deactivateSearch() {
-        _isSearchActive.value = false
-        _searchQuery.value = ""
+        isSearchActive.value = false
+        searchQuery.value = ""
     }
 
     /**
      * Updates the search query.
      */
     fun updateSearchQuery(query: String) {
-        _searchQuery.value = query
+        searchQuery.value = query
     }
 
     /**
@@ -174,32 +179,39 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             when (val result = manageFavoritesUseCase.addToFavorites(app)) {
                 is ManageFavoritesUseCase.AddFavoriteResult.Success -> {
-                    Toast.makeText(
-                        getApplication(),
-                        "Added to favorites",
-                        Toast.LENGTH_SHORT,
-                    ).show()
+                    Toast
+                        .makeText(
+                            getApplication(),
+                            "Added to favorites",
+                            Toast.LENGTH_SHORT,
+                        ).show()
                 }
+
                 is ManageFavoritesUseCase.AddFavoriteResult.AlreadyExists -> {
-                    Toast.makeText(
-                        getApplication(),
-                        "Already in favorites",
-                        Toast.LENGTH_SHORT,
-                    ).show()
+                    Toast
+                        .makeText(
+                            getApplication(),
+                            "Already in favorites",
+                            Toast.LENGTH_SHORT,
+                        ).show()
                 }
+
                 is ManageFavoritesUseCase.AddFavoriteResult.LimitReached -> {
-                    Toast.makeText(
-                        getApplication(),
-                        "Maximum 5 favorites allowed",
-                        Toast.LENGTH_SHORT,
-                    ).show()
+                    Toast
+                        .makeText(
+                            getApplication(),
+                            "Maximum 5 favorites allowed",
+                            Toast.LENGTH_SHORT,
+                        ).show()
                 }
+
                 is ManageFavoritesUseCase.AddFavoriteResult.Error -> {
-                    Toast.makeText(
-                        getApplication(),
-                        "Failed to add favorite",
-                        Toast.LENGTH_SHORT,
-                    ).show()
+                    Toast
+                        .makeText(
+                            getApplication(),
+                            "Failed to add favorite",
+                            Toast.LENGTH_SHORT,
+                        ).show()
                 }
             }
         }
@@ -211,11 +223,12 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     fun removeFromFavorites(favorite: FavoriteApp) {
         viewModelScope.launch {
             manageFavoritesUseCase.removeFromFavorites(favorite.packageName)
-            Toast.makeText(
-                getApplication(),
-                "Removed from favorites",
-                Toast.LENGTH_SHORT,
-            ).show()
+            Toast
+                .makeText(
+                    getApplication(),
+                    "Removed from favorites",
+                    Toast.LENGTH_SHORT,
+                ).show()
         }
     }
 
@@ -236,9 +249,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     /**
      * Checks if an app is in favorites.
      */
-    fun isAppFavorite(app: App): Boolean {
-        return favorites.value.any { it.packageName == app.packageName }
-    }
+    fun isAppFavorite(app: App): Boolean = favorites.value.any { it.packageName == app.packageName }
 
     /**
      * Adds an app to favorites from context menu.
@@ -247,32 +258,39 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             when (val result = manageFavoritesUseCase.addToFavorites(app)) {
                 is ManageFavoritesUseCase.AddFavoriteResult.Success -> {
-                    Toast.makeText(
-                        getApplication(),
-                        "Added to favorites",
-                        Toast.LENGTH_SHORT,
-                    ).show()
+                    Toast
+                        .makeText(
+                            getApplication(),
+                            "Added to favorites",
+                            Toast.LENGTH_SHORT,
+                        ).show()
                 }
+
                 is ManageFavoritesUseCase.AddFavoriteResult.AlreadyExists -> {
-                    Toast.makeText(
-                        getApplication(),
-                        "Already in favorites",
-                        Toast.LENGTH_SHORT,
-                    ).show()
+                    Toast
+                        .makeText(
+                            getApplication(),
+                            "Already in favorites",
+                            Toast.LENGTH_SHORT,
+                        ).show()
                 }
+
                 is ManageFavoritesUseCase.AddFavoriteResult.LimitReached -> {
-                    Toast.makeText(
-                        getApplication(),
-                        "Maximum 5 favorites allowed",
-                        Toast.LENGTH_SHORT,
-                    ).show()
+                    Toast
+                        .makeText(
+                            getApplication(),
+                            "Maximum 5 favorites allowed",
+                            Toast.LENGTH_SHORT,
+                        ).show()
                 }
+
                 is ManageFavoritesUseCase.AddFavoriteResult.Error -> {
-                    Toast.makeText(
-                        getApplication(),
-                        "Failed to add favorite",
-                        Toast.LENGTH_SHORT,
-                    ).show()
+                    Toast
+                        .makeText(
+                            getApplication(),
+                            "Failed to add favorite",
+                            Toast.LENGTH_SHORT,
+                        ).show()
                 }
             }
         }
@@ -284,11 +302,12 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     fun removeAppFromFavorites(app: App) {
         viewModelScope.launch {
             manageFavoritesUseCase.removeFromFavorites(app.packageName)
-            Toast.makeText(
-                getApplication(),
-                "Removed from favorites",
-                Toast.LENGTH_SHORT,
-            ).show()
+            Toast
+                .makeText(
+                    getApplication(),
+                    "Removed from favorites",
+                    Toast.LENGTH_SHORT,
+                ).show()
         }
     }
 
@@ -303,11 +322,12 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                 }
             getApplication<Application>().startActivity(intent)
         } catch (e: Exception) {
-            Toast.makeText(
-                getApplication(),
-                "Phone app not available",
-                Toast.LENGTH_SHORT,
-            ).show()
+            Toast
+                .makeText(
+                    getApplication(),
+                    "Phone app not available",
+                    Toast.LENGTH_SHORT,
+                ).show()
         }
     }
 
@@ -325,27 +345,31 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             // Try alternative method - launch camera via package name
             try {
                 val cameraIntent =
-                    getApplication<Application>().packageManager
+                    getApplication<Application>()
+                        .packageManager
                         .getLaunchIntentForPackage("com.google.android.GoogleCamera")
-                        ?: getApplication<Application>().packageManager
+                        ?: getApplication<Application>()
+                            .packageManager
                             .getLaunchIntentForPackage("com.android.camera2")
 
                 if (cameraIntent != null) {
                     cameraIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     getApplication<Application>().startActivity(cameraIntent)
                 } else {
-                    Toast.makeText(
+                    Toast
+                        .makeText(
+                            getApplication(),
+                            "Camera app not available",
+                            Toast.LENGTH_SHORT,
+                        ).show()
+                }
+            } catch (ex: Exception) {
+                Toast
+                    .makeText(
                         getApplication(),
                         "Camera app not available",
                         Toast.LENGTH_SHORT,
                     ).show()
-                }
-            } catch (ex: Exception) {
-                Toast.makeText(
-                    getApplication(),
-                    "Camera app not available",
-                    Toast.LENGTH_SHORT,
-                ).show()
             }
         }
     }
@@ -365,27 +389,31 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             // Fallback: try to launch the clock app directly
             try {
                 val clockIntent =
-                    getApplication<Application>().packageManager
+                    getApplication<Application>()
+                        .packageManager
                         .getLaunchIntentForPackage("com.google.android.deskclock")
-                        ?: getApplication<Application>().packageManager
+                        ?: getApplication<Application>()
+                            .packageManager
                             .getLaunchIntentForPackage("com.android.deskclock")
 
                 if (clockIntent != null) {
                     clockIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     getApplication<Application>().startActivity(clockIntent)
                 } else {
-                    Toast.makeText(
+                    Toast
+                        .makeText(
+                            getApplication(),
+                            "Clock app not available",
+                            Toast.LENGTH_SHORT,
+                        ).show()
+                }
+            } catch (ex: Exception) {
+                Toast
+                    .makeText(
                         getApplication(),
                         "Clock app not available",
                         Toast.LENGTH_SHORT,
                     ).show()
-                }
-            } catch (ex: Exception) {
-                Toast.makeText(
-                    getApplication(),
-                    "Clock app not available",
-                    Toast.LENGTH_SHORT,
-                ).show()
             }
         }
     }
@@ -398,22 +426,22 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             val intent = createAppInfoIntent(app)
             getApplication<Application>().startActivity(intent)
         } catch (e: Exception) {
-            Toast.makeText(
-                getApplication(),
-                "Unable to open app info",
-                Toast.LENGTH_SHORT,
-            ).show()
+            Toast
+                .makeText(
+                    getApplication(),
+                    "Unable to open app info",
+                    Toast.LENGTH_SHORT,
+                ).show()
         }
     }
 
     companion object {
-        fun createAppInfoIntent(app: App): Intent {
-            return Intent(
+        fun createAppInfoIntent(app: App): Intent =
+            Intent(
                 android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
                 Uri.fromParts("package", app.packageName, null),
             ).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
             }
-        }
     }
 }

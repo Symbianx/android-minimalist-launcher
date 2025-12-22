@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 class FavoritesRepositoryImpl(
     private val favoritesDataSource: FavoritesDataSource,
 ) : FavoritesRepository {
-    private val _favorites = MutableStateFlow<List<FavoriteApp>>(emptyList())
+    private val favorites = MutableStateFlow<List<FavoriteApp>>(emptyList())
 
     init {
         // Load favorites on initialization (should be called from a coroutine)
@@ -27,15 +27,13 @@ class FavoritesRepositoryImpl(
      */
     suspend fun initialize() {
         val loadedFavorites = favoritesDataSource.loadFavorites()
-        _favorites.value = loadedFavorites
+        favorites.value = loadedFavorites
     }
 
-    override fun observeFavorites(): Flow<List<FavoriteApp>> {
-        return _favorites.asStateFlow()
-    }
+    override fun observeFavorites(): Flow<List<FavoriteApp>> = favorites.asStateFlow()
 
     override suspend fun addFavorite(app: App): Boolean {
-        val currentFavorites = _favorites.value
+        val currentFavorites = favorites.value
 
         // Check if already exists
         if (currentFavorites.any { it.packageName == app.packageName }) {
@@ -58,14 +56,14 @@ class FavoritesRepositoryImpl(
 
         // Update list
         val updatedFavorites = currentFavorites + newFavorite
-        _favorites.value = updatedFavorites
+        favorites.value = updatedFavorites
         favoritesDataSource.saveFavorites(updatedFavorites)
 
         return true
     }
 
     override suspend fun removeFavorite(packageName: String) {
-        val currentFavorites = _favorites.value
+        val currentFavorites = favorites.value
         val updatedFavorites = currentFavorites.filter { it.packageName != packageName }
 
         // Recompute positions to maintain contiguous 0..N range
@@ -74,13 +72,13 @@ class FavoritesRepositoryImpl(
                 favorite.copy(position = index)
             }
 
-        _favorites.value = reindexed
+        favorites.value = reindexed
         favoritesDataSource.saveFavorites(reindexed)
     }
 
     override suspend fun validateFavorites(installedApps: List<App>) {
         val installedPackages = installedApps.map { it.packageName }.toSet()
-        val currentFavorites = _favorites.value
+        val currentFavorites = favorites.value
 
         // Remove favorites for uninstalled apps
         val validFavorites = currentFavorites.filter { it.packageName in installedPackages }
@@ -91,16 +89,12 @@ class FavoritesRepositoryImpl(
                 validFavorites.mapIndexed { index, favorite ->
                     favorite.copy(position = index)
                 }
-            _favorites.value = reindexed
+            favorites.value = reindexed
             favoritesDataSource.saveFavorites(reindexed)
         }
     }
 
-    override suspend fun getFavoriteCount(): Int {
-        return _favorites.value.size
-    }
+    override suspend fun getFavoriteCount(): Int = favorites.value.size
 
-    override suspend fun isFavorite(packageName: String): Boolean {
-        return _favorites.value.any { it.packageName == packageName }
-    }
+    override suspend fun isFavorite(packageName: String): Boolean = favorites.value.any { it.packageName == packageName }
 }

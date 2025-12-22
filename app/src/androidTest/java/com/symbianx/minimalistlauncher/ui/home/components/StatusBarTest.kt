@@ -18,12 +18,13 @@ class StatusBarTest {
     @Test
     fun clockTap_invokesCallback() {
         var clockTapped = false
-        val deviceStatus = DeviceStatus(
-            currentTime = "10:30",
-            currentDate = "Mon, Jan 1",
-            batteryPercentage = 85,
-            isCharging = false,
-        )
+        val deviceStatus =
+            DeviceStatus(
+                currentTime = "10:30",
+                currentDate = "Mon, Jan 1",
+                batteryPercentage = 85,
+                isCharging = false,
+            )
 
         composeTestRule.setContent {
             StatusBar(
@@ -42,12 +43,13 @@ class StatusBarTest {
     @Test
     fun dateTap_invokesCallback() {
         var clockTapped = false
-        val deviceStatus = DeviceStatus(
-            currentTime = "10:30",
-            currentDate = "Mon, Jan 1",
-            batteryPercentage = 85,
-            isCharging = false,
-        )
+        val deviceStatus =
+            DeviceStatus(
+                currentTime = "10:30",
+                currentDate = "Mon, Jan 1",
+                batteryPercentage = 85,
+                isCharging = false,
+            )
 
         composeTestRule.setContent {
             StatusBar(

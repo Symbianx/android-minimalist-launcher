@@ -66,6 +66,8 @@ interface ManageFavoritesUseCase {
         object LimitReached : AddFavoriteResult()
 
         /** Generic failure */
-        data class Error(val message: String) : AddFavoriteResult()
+        data class Error(
+            val message: String,
+        ) : AddFavoriteResult()
     }
 }

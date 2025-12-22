@@ -47,10 +47,11 @@ fun CircularBatteryIndicator(
     val chargingAlpha by infiniteTransition.animateFloat(
         initialValue = 0.4f,
         targetValue = 1.0f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 1000, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse,
-        ),
+        animationSpec =
+            infiniteRepeatable(
+                animation = tween(durationMillis = 1000, easing = LinearEasing),
+                repeatMode = RepeatMode.Reverse,
+            ),
         label = "chargingPulse",
     )
 
@@ -79,7 +80,7 @@ fun CircularBatteryIndicator(
 
             // Use actual battery percentage for display
             val sweepAngle = (batteryPercentage / 100f) * 360f
-            
+
             // Apply pulse alpha when charging, full opacity when not
             val displayAlpha = if (isCharging) chargingAlpha else 1.0f
 

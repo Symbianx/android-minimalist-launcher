@@ -72,8 +72,7 @@ class AppListDataSourceImpl(
                                 Log.e("AppListDataSource", "Error loading app: ${e.message}")
                                 null
                             }
-                        }
-                        .distinctBy { it.packageName }
+                        }.distinctBy { it.packageName }
                         .sortedBy { it.label.lowercase() }
 
                 Log.d("AppListDataSource", "Loaded ${apps.size} apps (including system apps)")

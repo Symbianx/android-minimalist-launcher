@@ -13,17 +13,19 @@ import org.robolectric.RobolectricTestRunner
 class AutoLaunchDeciderTest {
     @Test
     fun eligible_whenEnabled_active_nonBlank_singleResult() {
-        val state = SearchState(
-            isActive = true,
-            query = "Maps",
-            results = listOf(
-                App(
-                    packageName = "com.google.android.apps.maps",
-                    label = "Maps",
-                    launchIntent = Intent(Intent.ACTION_MAIN).apply { `package` = "com.google.android.apps.maps" },
-                ),
-            ),
-        )
+        val state =
+            SearchState(
+                isActive = true,
+                query = "Maps",
+                results =
+                    listOf(
+                        App(
+                            packageName = "com.google.android.apps.maps",
+                            label = "Maps",
+                            launchIntent = Intent(Intent.ACTION_MAIN).apply { `package` = "com.google.android.apps.maps" },
+                        ),
+                    ),
+            )
         assertTrue(AutoLaunchDecider.isEligible(enabled = true, state = state))
     }
 

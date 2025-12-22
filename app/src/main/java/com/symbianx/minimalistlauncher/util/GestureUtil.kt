@@ -17,22 +17,23 @@ object GestureUtil {
     fun Modifier.swipeGesture(
         onSwipeLeft: () -> Unit = {},
         onSwipeRight: () -> Unit = {},
-        threshold: Float = 100f
-    ): Modifier = this.pointerInput(Unit) {
-        var totalDrag = 0f
-        detectHorizontalDragGestures(
-            onDragEnd = {
-                if (totalDrag > threshold) {
-                    onSwipeRight()
-                } else if (totalDrag < -threshold) {
-                    onSwipeLeft()
-                }
-                totalDrag = 0f
-            },
-            onHorizontalDrag = { change, dragAmount ->
-                change.consume()
-                totalDrag += dragAmount
-            }
-        )
-    }
+        threshold: Float = 100f,
+    ): Modifier =
+        this.pointerInput(Unit) {
+            var totalDrag = 0f
+            detectHorizontalDragGestures(
+                onDragEnd = {
+                    if (totalDrag > threshold) {
+                        onSwipeRight()
+                    } else if (totalDrag < -threshold) {
+                        onSwipeLeft()
+                    }
+                    totalDrag = 0f
+                },
+                onHorizontalDrag = { change, dragAmount ->
+                    change.consume()
+                    totalDrag += dragAmount
+                },
+            )
+        }
 }

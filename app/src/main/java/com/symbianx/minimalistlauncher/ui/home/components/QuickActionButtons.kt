@@ -47,13 +47,14 @@ fun QuickActionButtons(
         val isPhonePressed by phoneInteractionSource.collectIsPressedAsState()
         val phoneScale by animateFloatAsState(
             targetValue = if (isPhonePressed) 0.85f else 1f,
-            label = "phoneScale"
+            label = "phoneScale",
         )
         IconButton(
             onClick = onPhoneClick,
-            modifier = Modifier
-                .size(48.dp)
-                .scale(phoneScale),
+            modifier =
+                Modifier
+                    .size(48.dp)
+                    .scale(phoneScale),
             interactionSource = phoneInteractionSource,
         ) {
             Icon(
@@ -69,13 +70,14 @@ fun QuickActionButtons(
         val isCameraPressed by cameraInteractionSource.collectIsPressedAsState()
         val cameraScale by animateFloatAsState(
             targetValue = if (isCameraPressed) 0.85f else 1f,
-            label = "cameraScale"
+            label = "cameraScale",
         )
         IconButton(
             onClick = onCameraClick,
-            modifier = Modifier
-                .size(48.dp)
-                .scale(cameraScale),
+            modifier =
+                Modifier
+                    .size(48.dp)
+                    .scale(cameraScale),
             interactionSource = cameraInteractionSource,
         ) {
             Icon(

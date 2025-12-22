@@ -1,19 +1,18 @@
 package com.symbianx.minimalistlauncher.ui.home
 
+import android.content.Intent
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.longClick
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTouchInput
-import androidx.compose.ui.test.longClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import android.content.Intent
 import com.symbianx.minimalistlauncher.domain.model.App
 import com.symbianx.minimalistlauncher.ui.home.components.AppContextMenu
 import com.symbianx.minimalistlauncher.ui.home.components.AppListItem
 import org.junit.Assert.assertTrue
-import org.junit.Assert.assertFalse
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -25,11 +24,12 @@ class AppContextMenuTest {
 
     @Test
     fun longPress_onAppItem_opensContextMenu() {
-        val app = App(
-            packageName = "com.google.android.apps.maps",
-            label = "Maps",
-            launchIntent = Intent(Intent.ACTION_MAIN).apply { `package` = "com.google.android.apps.maps" },
-        )
+        val app =
+            App(
+                packageName = "com.google.android.apps.maps",
+                label = "Maps",
+                launchIntent = Intent(Intent.ACTION_MAIN).apply { `package` = "com.google.android.apps.maps" },
+            )
 
         composeTestRule.setContent {
             val showMenu = remember { mutableStateOf(false) }
@@ -59,11 +59,12 @@ class AppContextMenuTest {
 
     @Test
     fun addToFavorites_viaContextMenu_triggersCallback() {
-        val app = App(
-            packageName = "com.android.camera",
-            label = "Camera",
-            launchIntent = Intent(Intent.ACTION_MAIN).apply { `package` = "com.android.camera" },
-        )
+        val app =
+            App(
+                packageName = "com.android.camera",
+                label = "Camera",
+                launchIntent = Intent(Intent.ACTION_MAIN).apply { `package` = "com.android.camera" },
+            )
         var added = false
 
         composeTestRule.setContent {
@@ -87,11 +88,12 @@ class AppContextMenuTest {
 
     @Test
     fun removeFromFavorites_viaContextMenu_triggersCallback() {
-        val app = App(
-            packageName = "com.google.android.calendar",
-            label = "Calendar",
-            launchIntent = Intent(Intent.ACTION_MAIN).apply { `package` = "com.google.android.calendar" },
-        )
+        val app =
+            App(
+                packageName = "com.google.android.calendar",
+                label = "Calendar",
+                launchIntent = Intent(Intent.ACTION_MAIN).apply { `package` = "com.google.android.calendar" },
+            )
         var removed = false
 
         composeTestRule.setContent {
@@ -115,11 +117,12 @@ class AppContextMenuTest {
 
     @Test
     fun goToAppInfo_viaContextMenu_triggersCallback() {
-        val app = App(
-            packageName = "com.google.android.apps.maps",
-            label = "Maps",
-            launchIntent = Intent(Intent.ACTION_MAIN).apply { `package` = "com.google.android.apps.maps" },
-        )
+        val app =
+            App(
+                packageName = "com.google.android.apps.maps",
+                label = "Maps",
+                launchIntent = Intent(Intent.ACTION_MAIN).apply { `package` = "com.google.android.apps.maps" },
+            )
         var openedInfo = false
 
         composeTestRule.setContent {
