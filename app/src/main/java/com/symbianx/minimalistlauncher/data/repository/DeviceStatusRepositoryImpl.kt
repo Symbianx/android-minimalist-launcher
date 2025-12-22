@@ -19,8 +19,8 @@ class DeviceStatusRepositoryImpl(
 ) : DeviceStatusRepository {
     private val timeFlow: Flow<String> =
         flow {
+            val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT, Locale.getDefault())
             while (true) {
-                val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT, Locale.getDefault())
                 emit(timeFormat.format(Date()))
                 delay(1_000) // Update every second to ensure clock is always accurate
             }
@@ -28,8 +28,8 @@ class DeviceStatusRepositoryImpl(
 
     private val dateFlow: Flow<String> =
         flow {
+            val dateFormat = SimpleDateFormat("EEE, MMM dd", Locale.getDefault())
             while (true) {
-                val dateFormat = SimpleDateFormat("EEE, MMM dd", Locale.getDefault())
                 emit(dateFormat.format(Date()))
                 delay(60_000) // Update every minute - dates don't change frequently
             }
