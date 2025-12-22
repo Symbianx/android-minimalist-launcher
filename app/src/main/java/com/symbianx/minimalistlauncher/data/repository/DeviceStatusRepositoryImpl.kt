@@ -22,7 +22,7 @@ class DeviceStatusRepositoryImpl(
             while (true) {
                 val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT, Locale.getDefault())
                 emit(timeFormat.format(Date()))
-                delay(60_000) // Update every minute
+                delay(1_000) // Update every second to ensure clock is always accurate
             }
         }
 
@@ -31,7 +31,7 @@ class DeviceStatusRepositoryImpl(
             while (true) {
                 val dateFormat = SimpleDateFormat("EEE, MMM dd", Locale.getDefault())
                 emit(dateFormat.format(Date()))
-                delay(60_000) // Update every minute
+                delay(1_000) // Update every second to keep in sync with time
             }
         }
 
