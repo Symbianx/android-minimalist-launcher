@@ -39,8 +39,14 @@ class DeviceStatusRepositoryImpl(
      * Calculates milliseconds until the next day boundary (midnight) for battery-efficient date updates.
      */
     private fun calculateDelayToNextDay(now: LocalDateTime): Long {
-        // Calculate time until midnight (00:00:00.000)
-        val secondsUntilMidnight = (23 - now.hour) * 3600L + (59 - now.minute) * 60L + (60 - now.second)
+        // If we're exactly at midnight, no delay needed
+        if (now.hour == 0 && now.minute == 0 && now.second == 0 && now.nano == 0) {
+            return 0
+        }
+        
+        // Calculate time until next midnight (00:00:00.000)
+        val secondsInDay = now.hour * 3600L + now.minute * 60L + now.second
+        val secondsUntilMidnight = 86400L - secondsInDay
         val nanosUntilMidnight = 1_000_000_000 - now.nano
         return (secondsUntilMidnight - 1) * 1_000L + nanosUntilMidnight / 1_000_000L
     }
