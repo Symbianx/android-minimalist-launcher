@@ -17,10 +17,12 @@ import java.util.Locale
 class DeviceStatusRepositoryImpl(
     private val batteryDataSource: BatteryDataSource,
 ) : DeviceStatusRepository {
+    private val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT, Locale.getDefault())
+    private val dateFormat = SimpleDateFormat("EEE, MMM dd", Locale.getDefault())
+
     private val timeFlow: Flow<String> =
         flow {
             while (true) {
-                val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT, Locale.getDefault())
                 emit(timeFormat.format(Date()))
                 delay(1_000) // Update every second
             }
@@ -29,7 +31,6 @@ class DeviceStatusRepositoryImpl(
     private val dateFlow: Flow<String> =
         flow {
             while (true) {
-                val dateFormat = SimpleDateFormat("EEE, MMM dd", Locale.getDefault())
                 emit(dateFormat.format(Date()))
                 delay(60_000) // Update every minute
             }
