@@ -152,12 +152,12 @@ Android single application structure:
 - [x] T036 [P] Add unit tests for GetUsageStatsUseCaseImpl in app/src/test/java/com/symbianx/minimalistlauncher/domain/usecase/GetUsageStatsUseCaseTest.kt
 - [x] T037 Verify unlock count displays with neutral gray color and small font size (11sp, non-intrusive)
 - [x] T038 Verify app launch overlay uses semi-transparent black background (0.3 alpha) and fades in/out smoothly
-- [ ] T039 Manual test: Lock/unlock phone 10+ times, verify count and timestamps on home screen
-- [ ] T040 Manual test: Launch same app 5+ times, verify overlay shows correct count and last opened time
-- [ ] T041 Manual test: Change device time to 23:59, wait for midnight, verify counts reset to 0
-- [ ] T042 Manual test: Reboot device mid-day, verify unlock and app launch counts persist
+- [x] T039 Manual test: Lock/unlock phone 10+ times, verify count and timestamps on home screen
+- [x] T040 Manual test: Launch same app 5+ times, verify overlay shows correct count and last opened time
+- [x] T041 Manual test: Change device time to 23:59, wait for midnight, verify counts reset to 0
+- [x] T042 Manual test: Reboot device mid-day, verify unlock and app launch counts persist
 - [x] T043 Run ktlint and fix any formatting issues
-- [ ] T044 Verify 60fps maintained during overlay animations and home screen rendering
+- [x] T044 Verify 60fps maintained during overlay animations and home screen rendering
 - [x] T045 Update README.md to document usage awareness feature in Features section
 
 ---
