@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.symbianx.minimalistlauncher">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
-        tools:ignore="QueryAllPackagesPermission"/>
+    <!-- Removed QUERY_ALL_PACKAGES permission: not required for launcher apps. -->
     <uses-permission android:name="android.permission.EXPAND_STATUS_BAR" />
 
     <uses-feature android:name="android.hardware.touchscreen" />
 
-    <!-- Declare intent to query all launcher apps -->
+    <!-- Declare intent to query all launcher apps (required for package visibility on Android 11+) -->
     <queries>
         <intent>
             <action android:name="android.intent.action.MAIN" />
