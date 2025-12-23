@@ -62,6 +62,52 @@ class HomeViewModel(
     val autoLaunchEnabled: Boolean = true
     val autoLaunchDelayMs: Long = 300L
 
+    // Usage awareness state
+    private val _unlockCountToday = MutableStateFlow(0)
+    val unlockCountToday: StateFlow<Int> = _unlockCountToday
+    private val _lastUnlockTimeAgo = MutableStateFlow<String?>(null)
+    val lastUnlockTimeAgo: StateFlow<String?> = _lastUnlockTimeAgo
+
+    // Usage tracking dependencies
+    private val usageRepository =
+        com.symbianx.minimalistlauncher.data.repository.UsageTrackingRepositoryImpl(
+            com.symbianx.minimalistlauncher.data.local
+                .UsageTrackingDataSourceImpl(application.applicationContext),
+        )
+    private val trackUnlockUseCase =
+        com.symbianx.minimalistlauncher.domain.usecase
+            .TrackUnlockUseCaseImpl(usageRepository)
+    private val trackAppLaunchUseCase =
+        com.symbianx.minimalistlauncher.domain.usecase
+            .TrackAppLaunchUseCaseImpl(usageRepository)
+    private val getUsageStatsUseCase =
+        com.symbianx.minimalistlauncher.domain.usecase
+            .GetUsageStatsUseCaseImpl(usageRepository)
+
+    // App launch overlay state
+    private val _appLaunchOverlayState = MutableStateFlow<AppLaunchOverlayState?>(null)
+    val appLaunchOverlayState: StateFlow<AppLaunchOverlayState?> = _appLaunchOverlayState
+
+    init {
+        viewModelScope.launch {
+            val summary = usageRepository.getDailyUnlockSummary()
+            _unlockCountToday.value = summary.unlockCount
+            _lastUnlockTimeAgo.value =
+                com.symbianx.minimalistlauncher.util.TimeFormatter
+                    .formatRelativeTime(summary.lastUnlockTimestamp)
+        }
+    }
+
+    fun onUnlockEvent() {
+        viewModelScope.launch {
+            val summary = trackUnlockUseCase()
+            _unlockCountToday.value = summary.unlockCount
+            _lastUnlockTimeAgo.value =
+                com.symbianx.minimalistlauncher.util.TimeFormatter
+                    .formatRelativeTime(summary.lastUnlockTimestamp)
+        }
+    }
+
     private val searchQuery = MutableStateFlow("")
     private val isSearchActive = MutableStateFlow(false)
     private val _contextMenuApp = MutableStateFlow<App?>(null)
@@ -153,6 +199,25 @@ class HomeViewModel(
      */
     fun launchApp(app: App) {
         viewModelScope.launch {
+            // Get stats BEFORE tracking the new launch (to show previous launch time)
+            val statsBefore = getUsageStatsUseCase.getAppStats(app.packageName)
+
+            // Track app launch
+            val summary = trackAppLaunchUseCase(app.packageName)
+
+            // Show overlay
+            _appLaunchOverlayState.value =
+                AppLaunchOverlayState(
+                    appName = app.label,
+                    launchCount = summary.launchCount,
+                    lastLaunchTimeAgo = statsBefore.lastLaunchTimeAgo,
+                    visible = true,
+                )
+
+            // Auto-dismiss after 800ms and launch app
+            kotlinx.coroutines.delay(800)
+            _appLaunchOverlayState.value = null
+
             if (launchAppUseCase.execute(app)) {
                 deactivateSearch()
             }
@@ -167,6 +232,25 @@ class HomeViewModel(
             // Find the app in the all apps list
             val app = allApps.value.find { it.packageName == favorite.packageName }
             if (app != null) {
+                // Get stats BEFORE tracking the new launch (to show previous launch time)
+                val statsBefore = getUsageStatsUseCase.getAppStats(app.packageName)
+
+                // Track app launch
+                val summary = trackAppLaunchUseCase(app.packageName)
+
+                // Show overlay
+                _appLaunchOverlayState.value =
+                    AppLaunchOverlayState(
+                        appName = app.label,
+                        launchCount = summary.launchCount,
+                        lastLaunchTimeAgo = statsBefore.lastLaunchTimeAgo,
+                        visible = true,
+                    )
+
+                // Auto-dismiss after 800ms and launch app
+                kotlinx.coroutines.delay(800)
+                _appLaunchOverlayState.value = null
+
                 launchAppUseCase.execute(app)
             }
         }
@@ -445,3 +529,10 @@ class HomeViewModel(
             }
     }
 }
+
+data class AppLaunchOverlayState(
+    val appName: String,
+    val launchCount: Int,
+    val lastLaunchTimeAgo: String?,
+    val visible: Boolean,
+)

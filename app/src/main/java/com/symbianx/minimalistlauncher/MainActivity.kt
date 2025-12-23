@@ -1,5 +1,9 @@
 package com.symbianx.minimalistlauncher
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -9,10 +13,16 @@ import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.symbianx.minimalistlauncher.ui.home.HomeScreen
+import com.symbianx.minimalistlauncher.ui.home.HomeViewModel
 import com.symbianx.minimalistlauncher.ui.theme.MinimalistLauncherTheme
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
+    private var unlockReceiver: BroadcastReceiver? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -31,8 +41,33 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             MinimalistLauncherTheme {
-                HomeScreen(modifier = Modifier.fillMaxSize())
+                val homeViewModel: HomeViewModel = viewModel()
+                HomeScreen(modifier = Modifier.fillMaxSize(), viewModel = homeViewModel)
+
+                // Register unlock receiver
+                if (unlockReceiver == null) {
+                    unlockReceiver =
+                        object : BroadcastReceiver() {
+                            override fun onReceive(
+                                context: Context,
+                                intent: Intent,
+                            ) {
+                                if (intent.action == Intent.ACTION_USER_PRESENT) {
+                                    lifecycleScope.launch {
+                                        homeViewModel.onUnlockEvent()
+                                    }
+                                }
+                            }
+                        }
+                    registerReceiver(unlockReceiver, IntentFilter(Intent.ACTION_USER_PRESENT))
+                }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unlockReceiver?.let { unregisterReceiver(it) }
+        unlockReceiver = null
     }
 }

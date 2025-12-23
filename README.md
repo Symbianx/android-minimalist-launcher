@@ -26,6 +26,26 @@ A distraction-free Android launcher focused on simplicity and essential interact
 
 > **Note**: This launcher is part of a personal journey to reduce phone distractions and spend less time mindlessly scrolling. By removing visual clutter and making apps deliberately accessible through search, it encourages more intentional phone usage.
 
+## Design Philosophy
+
+**"Make unconscious behavior visible, then step aside."**
+
+This launcher exists to make phone use **conscious, not controlled**. It introduces small moments of awareness before action, trusting users to decide for themselves.
+
+### Core Principles
+
+1. **Awareness, Not Guilt**  
+   Usage data is presented minimally and factually, never with judgment or shame-inducing language. The goal is to illuminate patterns, not punish behavior.
+
+2. **Consciousness Without Invasive Permissions**  
+   We work within normal launcher capabilities—no drawing over apps, no accessibility service abuse, no screen content tracking. Awareness doesn't require surveillance.
+
+3. **Autonomy Over Control**  
+   This launcher doesn't block apps, manipulate emotions, or optimize for engagement. It pauses the autopilot with gentle nudges (like showing unlock counts or app launch frequency), but never restricts or nags.
+
+4. **Clarity, Calm, and Respect**  
+   No guilt, no punishment, no dark patterns—just clear information that helps users make informed choices about their attention, if they want to.
+
 ## Development Journey
 
 The goal of this project was to experience spec driven development with:
