@@ -115,6 +115,17 @@ class HomeViewModel(
         }
     }
 
+    fun refreshUsageStats() {
+        viewModelScope.launch {
+            // Refresh stats without recording a new unlock
+            val summary = usageRepository.getDailyUnlockSummary()
+            _unlockCountToday.value = summary.unlockCount
+            _lastUnlockTimeAgo.value =
+                com.symbianx.minimalistlauncher.util.TimeFormatter
+                    .formatRelativeTime(summary.lastUnlockTimestamp)
+        }
+    }
+
     private val searchQuery = MutableStateFlow("")
     private val isSearchActive = MutableStateFlow(false)
     private val _contextMenuApp = MutableStateFlow<App?>(null)

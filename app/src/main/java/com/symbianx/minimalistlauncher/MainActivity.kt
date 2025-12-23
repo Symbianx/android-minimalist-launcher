@@ -70,4 +70,20 @@ class MainActivity : ComponentActivity() {
         unlockReceiver?.let { unregisterReceiver(it) }
         unlockReceiver = null
     }
+
+    override fun onResume() {
+        super.onResume()
+        // Force refresh usage stats on resume to handle midnight reset
+        val homeViewModel: HomeViewModel? = try {
+            // Try to get the ViewModel if it exists
+            androidx.lifecycle.ViewModelProvider(this).get(HomeViewModel::class.java)
+        } catch (e: Exception) {
+            null
+        }
+        homeViewModel?.let { vm ->
+            lifecycleScope.launch {
+                vm.refreshUsageStats() // Refresh stats without incrementing unlock count
+            }
+        }
+    }
 }

@@ -14,14 +14,22 @@ class UsageTrackingDataSourceImpl(
 
     override fun getUsageData(): UsageData {
         val data = prefs.getString("usage_data", null)
-        return if (data != null) {
+        val today = getToday()
+        val usage = if (data != null) {
             try {
-                json.decodeFromString(data)
+                json.decodeFromString<UsageData>(data)
             } catch (e: Exception) {
-                UsageData(currentDate = getToday())
+                UsageData(currentDate = today)
             }
         } else {
-            UsageData(currentDate = getToday())
+            UsageData(currentDate = today)
+        }
+        return if (usage.currentDate != today) {
+            val reset = UsageData(currentDate = today)
+            saveUsageData(reset)
+            reset
+        } else {
+            usage
         }
     }
 
