@@ -74,7 +74,7 @@ jobs:
           mappingFile: app/build/outputs/mapping/release/mapping.txt
           # Internal only, until we have enough testers and production is allowed
           track: internal
-          status: draft
+          status: completed
           # Quick updates
           inAppUpdatePriority: 5
 
