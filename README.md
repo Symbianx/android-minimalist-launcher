@@ -39,7 +39,6 @@ This project uses GitHub Actions for automated releases to the Google Play Store
 
 - **Automated Releases**: Publish a GitHub Release to trigger automatic Play Store deployment
 - **PR Validation**: All pull requests are automatically built and tested
-- **Setup Guide**: See [.github/RELEASE_SETUP.md](.github/RELEASE_SETUP.md) for configuration instructions
 - **Quick Release**: See [RELEASE.md](RELEASE.md) for the release process
 
 ## Future features

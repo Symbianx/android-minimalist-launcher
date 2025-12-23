@@ -74,9 +74,6 @@ git push origin :refs/tags/v1.0.0
 
 Then manage the rollback in Google Play Console.
 
-## Release Notes
-Update release notes in `distribution/whatsnew/whatsnew-en-US` before creating the tag.
-
 ## Local Release Build (Testing)
 To test the release build locally without deploying:
 
@@ -86,6 +83,3 @@ To test the release build locally without deploying:
 
 # Output: app/build/outputs/bundle/release/app-release.aab
 ```
-
-## Troubleshooting
-See [.github/RELEASE_SETUP.md](.github/RELEASE_SETUP.md#troubleshooting) for common issues.
