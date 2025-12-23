@@ -12,6 +12,11 @@ A distraction-free Android launcher focused on simplicity and essential interact
 
 - **Clean Home Screen**: Displays only time, date, and favorite apps
 - **Smart Battery Indicator**: Circular indicator around camera notch (Pixel 8 Pro) that appears only when battery is below 50%
+- **Usage Awareness**: Mindful phone use features without judgment or control
+  - **Unlock Counter**: See how many times you've unlocked your phone today in the top-left corner
+  - **App Launch Awareness**: Brief overlay shows "8th time today" when opening apps
+  - **Last Launch Time**: See "opened 20m ago" to notice compulsive checking patterns
+  - All data resets at midnight and stays local - no cloud sync, no tracking
 - **Gesture Navigation**: 
   - Swipe right-to-left for app search
   - Swipe left-to-right in search to return to home (with smooth animation)

@@ -100,11 +100,18 @@ class HomeViewModel(
 
     fun onUnlockEvent() {
         viewModelScope.launch {
+            // Get the previous unlock timestamp BEFORE recording the new unlock
+            val previousSummary = usageRepository.getDailyUnlockSummary()
+            val previousTimestamp = previousSummary.lastUnlockTimestamp
+            
+            // Now record the new unlock
             val summary = trackUnlockUseCase()
             _unlockCountToday.value = summary.unlockCount
+            
+            // Show the time since the PREVIOUS unlock, not the current one
             _lastUnlockTimeAgo.value =
                 com.symbianx.minimalistlauncher.util.TimeFormatter
-                    .formatRelativeTime(summary.lastUnlockTimestamp)
+                    .formatRelativeTime(previousTimestamp)
         }
     }
 

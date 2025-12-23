@@ -144,12 +144,12 @@ Android single application structure:
 
 **Purpose**: Quality improvements, testing, and documentation
 
-- [ ] T031 [P] Add unit tests for TimeFormatter in app/src/test/java/com/symbianx/minimalistlauncher/util/TimeFormatterTest.kt
-- [ ] T032 [P] Add unit tests for UsageTrackingDataSourceImpl (day boundary resets, corruption handling) in app/src/test/java/com/symbianx/minimalistlauncher/data/local/UsageTrackingDataSourceImplTest.kt
-- [ ] T033 [P] Add unit tests for UsageTrackingRepositoryImpl in app/src/test/java/com/symbianx/minimalistlauncher/data/repository/UsageTrackingRepositoryImplTest.kt
-- [ ] T034 [P] Add unit tests for TrackUnlockUseCaseImpl (graceful degradation) in app/src/test/java/com/symbianx/minimalistlauncher/domain/usecase/TrackUnlockUseCaseTest.kt
-- [ ] T035 [P] Add unit tests for TrackAppLaunchUseCaseImpl in app/src/test/java/com/symbianx/minimalistlauncher/domain/usecase/TrackAppLaunchUseCaseTest.kt
-- [ ] T036 [P] Add unit tests for GetUsageStatsUseCaseImpl in app/src/test/java/com/symbianx/minimalistlauncher/domain/usecase/GetUsageStatsUseCaseTest.kt
+- [x] T031 [P] Add unit tests for TimeFormatter in app/src/test/java/com/symbianx/minimalistlauncher/util/TimeFormatterTest.kt
+- [x] T032 [P] Add unit tests for UsageTrackingDataSourceImpl (day boundary resets, corruption handling) in app/src/test/java/com/symbianx/minimalistlauncher/data/local/UsageTrackingDataSourceImplTest.kt
+- [x] T033 [P] Add unit tests for UsageTrackingRepositoryImpl in app/src/test/java/com/symbianx/minimalistlauncher/data/repository/UsageTrackingRepositoryImplTest.kt
+- [x] T034 [P] Add unit tests for TrackUnlockUseCaseImpl (graceful degradation) in app/src/test/java/com/symbianx/minimalistlauncher/domain/usecase/TrackUnlockUseCaseTest.kt
+- [x] T035 [P] Add unit tests for TrackAppLaunchUseCaseImpl in app/src/test/java/com/symbianx/minimalistlauncher/domain/usecase/TrackAppLaunchUseCaseTest.kt
+- [x] T036 [P] Add unit tests for GetUsageStatsUseCaseImpl in app/src/test/java/com/symbianx/minimalistlauncher/domain/usecase/GetUsageStatsUseCaseTest.kt
 - [x] T037 Verify unlock count displays with neutral gray color and small font size (11sp, non-intrusive)
 - [x] T038 Verify app launch overlay uses semi-transparent black background (0.3 alpha) and fades in/out smoothly
 - [ ] T039 Manual test: Lock/unlock phone 10+ times, verify count and timestamps on home screen
@@ -158,7 +158,7 @@ Android single application structure:
 - [ ] T042 Manual test: Reboot device mid-day, verify unlock and app launch counts persist
 - [x] T043 Run ktlint and fix any formatting issues
 - [ ] T044 Verify 60fps maintained during overlay animations and home screen rendering
-- [ ] T045 Update README.md to document usage awareness feature in Features section
+- [x] T045 Update README.md to document usage awareness feature in Features section
 
 ---
 

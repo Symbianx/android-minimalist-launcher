@@ -14,7 +14,15 @@ class UsageTrackingDataSourceImpl(
 
     override fun getUsageData(): UsageData {
         val data = prefs.getString("usage_data", null)
-        return if (data != null) json.decodeFromString(data) else UsageData(currentDate = getToday())
+        return if (data != null) {
+            try {
+                json.decodeFromString(data)
+            } catch (e: Exception) {
+                UsageData(currentDate = getToday())
+            }
+        } else {
+            UsageData(currentDate = getToday())
+        }
     }
 
     override fun incrementUnlockCount() {
