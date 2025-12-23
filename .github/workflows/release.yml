@@ -72,9 +72,9 @@ jobs:
           packageName: com.symbianx.minimalistlauncher
           releaseFiles: app/build/outputs/bundle/release/app-release.aab
           mappingFile: app/build/outputs/mapping/release/mapping.txt
-          # Internal only, until we have enough testers and production is allowed
+          # Internal/draft only, until we have enough testers and production is allowed
           track: internal
-          status: completed
+          status: draft
           # Quick updates
           inAppUpdatePriority: 5
 
