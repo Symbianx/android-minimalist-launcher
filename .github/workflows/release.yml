@@ -56,16 +56,26 @@ jobs:
             -PversionName=$VERSION_NAME \
             -PversionCode=$VERSION_CODE
       
+      - name: Authenticate to GCP
+        id: auth
+        uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
       - name: Upload to Play Store
         uses: r0adkll/upload-google-play@v1
         with:
-          serviceAccountJsonPlainText: ${{ secrets.PLAY_STORE_SERVICE_ACCOUNT_JSON }}
+          serviceAccountJson: ${{ steps.auth.outputs.credentials_file_path }}
           packageName: com.symbianx.minimalistlauncher
-          releaseFiles: app/build/outputs/bundle/release/app-release.aab
-          track: production  # Options: internal, alpha, beta, production
-          status: completed  # Options: completed, draft, halted, inProgress
-          inAppUpdatePriority: 2
-          whatsNewDirectory: distribution/whatsnew
+          releaseFiles: app/release/app-release.aab
+          mappingFile: app/build/outputs/mapping/release/mapping.txt
+          # Internal only, until we have enough testers and production is allowed
+          track: internal
+          status: completed
+          # Quick updates
+          inAppUpdatePriority: 5
+
       - name: Upload build artifacts to release
         uses: softprops/action-gh-release@v1
         with:
