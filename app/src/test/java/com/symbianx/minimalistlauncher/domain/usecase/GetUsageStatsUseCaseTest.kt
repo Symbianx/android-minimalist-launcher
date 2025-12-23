@@ -24,11 +24,9 @@ class GetUsageStatsUseCaseTest {
         var unlockSummary = DailyUnlockSummary("2025-12-23", 0, 0L)
         val appSummaries = mutableMapOf<String, AppLaunchSummary>()
 
-        override suspend fun recordUnlock() =
-            throw NotImplementedError()
+        override suspend fun recordUnlock() = throw NotImplementedError()
 
-        override suspend fun recordAppLaunch(packageName: String) =
-            throw NotImplementedError()
+        override suspend fun recordAppLaunch(packageName: String) = throw NotImplementedError()
 
         override suspend fun getDailyUnlockSummary(): DailyUnlockSummary {
             if (shouldThrowException) throw RuntimeException("Database error")
@@ -40,8 +38,7 @@ class GetUsageStatsUseCaseTest {
             return appSummaries[packageName] ?: AppLaunchSummary(packageName, 0, 0L)
         }
 
-        override suspend fun clearAllData() =
-            throw NotImplementedError()
+        override suspend fun clearAllData() = throw NotImplementedError()
     }
 
     @Test
@@ -49,11 +46,12 @@ class GetUsageStatsUseCaseTest {
         runTest {
             val now = System.currentTimeMillis()
             val fiveMinutesAgo = now - (5 * 60 * 1000)
-            repository.unlockSummary = DailyUnlockSummary(
-                date = "2025-12-23",
-                unlockCount = 7,
-                lastUnlockTimestamp = fiveMinutesAgo
-            )
+            repository.unlockSummary =
+                DailyUnlockSummary(
+                    date = "2025-12-23",
+                    unlockCount = 7,
+                    lastUnlockTimestamp = fiveMinutesAgo,
+                )
 
             val result = useCase.getHomeScreenStats()
 
@@ -64,11 +62,12 @@ class GetUsageStatsUseCaseTest {
     @Test
     fun getHomeScreenStats_returnsNull_whenNoUnlocks() =
         runTest {
-            repository.unlockSummary = DailyUnlockSummary(
-                date = "2025-12-23",
-                unlockCount = 0,
-                lastUnlockTimestamp = 0L
-            )
+            repository.unlockSummary =
+                DailyUnlockSummary(
+                    date = "2025-12-23",
+                    unlockCount = 0,
+                    lastUnlockTimestamp = 0L,
+                )
 
             val result = useCase.getHomeScreenStats()
 
@@ -92,11 +91,12 @@ class GetUsageStatsUseCaseTest {
         runTest {
             val now = System.currentTimeMillis()
             val fifteenMinutesAgo = now - (15 * 60 * 1000)
-            repository.appSummaries["com.example.app"] = AppLaunchSummary(
-                packageName = "com.example.app",
-                launchCount = 3,
-                lastLaunchTimestamp = fifteenMinutesAgo
-            )
+            repository.appSummaries["com.example.app"] =
+                AppLaunchSummary(
+                    packageName = "com.example.app",
+                    launchCount = 3,
+                    lastLaunchTimestamp = fifteenMinutesAgo,
+                )
 
             val result = useCase.getAppStats("com.example.app")
 

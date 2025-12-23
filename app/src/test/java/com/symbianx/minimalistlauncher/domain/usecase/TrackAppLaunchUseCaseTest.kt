@@ -21,8 +21,7 @@ class TrackAppLaunchUseCaseTest {
         var shouldThrowException = false
         val launchCounts = mutableMapOf<String, Int>()
 
-        override suspend fun recordUnlock() =
-            throw NotImplementedError()
+        override suspend fun recordUnlock() = throw NotImplementedError()
 
         override suspend fun recordAppLaunch(packageName: String): AppLaunchSummary {
             if (shouldThrowException) throw RuntimeException("Database error")
@@ -31,18 +30,15 @@ class TrackAppLaunchUseCaseTest {
             return AppLaunchSummary(
                 packageName = packageName,
                 launchCount = count,
-                lastLaunchTimestamp = 123456789L
+                lastLaunchTimestamp = 123456789L,
             )
         }
 
-        override suspend fun getDailyUnlockSummary() =
-            throw NotImplementedError()
+        override suspend fun getDailyUnlockSummary() = throw NotImplementedError()
 
-        override suspend fun getAppLaunchSummary(packageName: String) =
-            throw NotImplementedError()
+        override suspend fun getAppLaunchSummary(packageName: String) = throw NotImplementedError()
 
-        override suspend fun clearAllData() =
-            throw NotImplementedError()
+        override suspend fun clearAllData() = throw NotImplementedError()
     }
 
     @Test

@@ -27,21 +27,17 @@ class TrackUnlockUseCaseTest {
             return DailyUnlockSummary(
                 date = "2025-12-23",
                 unlockCount = unlockCount,
-                lastUnlockTimestamp = 123456789L
+                lastUnlockTimestamp = 123456789L,
             )
         }
 
-        override suspend fun recordAppLaunch(packageName: String) =
-            throw NotImplementedError()
+        override suspend fun recordAppLaunch(packageName: String) = throw NotImplementedError()
 
-        override suspend fun getDailyUnlockSummary() =
-            throw NotImplementedError()
+        override suspend fun getDailyUnlockSummary() = throw NotImplementedError()
 
-        override suspend fun getAppLaunchSummary(packageName: String) =
-            throw NotImplementedError()
+        override suspend fun getAppLaunchSummary(packageName: String) = throw NotImplementedError()
 
-        override suspend fun clearAllData() =
-            throw NotImplementedError()
+        override suspend fun clearAllData() = throw NotImplementedError()
     }
 
     @Test

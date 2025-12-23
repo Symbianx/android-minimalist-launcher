@@ -94,14 +94,16 @@ class UsageTrackingDataSourceImplTest {
 
     @Test
     fun saveUsageData_persistsData() {
-        val testData = UsageData(
-            currentDate = "2025-12-23",
-            unlockCount = 5,
-            lastUnlockTimestamp = 123456789L,
-            appLaunches = mapOf(
-                "com.example.app" to AppUsageData(3, 987654321L)
+        val testData =
+            UsageData(
+                currentDate = "2025-12-23",
+                unlockCount = 5,
+                lastUnlockTimestamp = 123456789L,
+                appLaunches =
+                    mapOf(
+                        "com.example.app" to AppUsageData(3, 987654321L),
+                    ),
             )
-        )
         dataSource.saveUsageData(testData)
         val result = dataSource.getUsageData()
         assertEquals(5, result.unlockCount)
