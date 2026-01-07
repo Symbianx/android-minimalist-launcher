@@ -21,17 +21,15 @@ import kotlinx.coroutines.flow.map
 class SettingsRepositoryImpl(
     private val dataSource: SettingsDataSource,
     private val appRepository: AppRepository,
-    private val logger: SettingsLogger
+    private val logger: SettingsLogger,
 ) : SettingsRepository {
-
-    override fun getSettings(): Flow<LauncherSettings> {
-        return dataSource.readSettings().map { settings ->
+    override fun getSettings(): Flow<LauncherSettings> =
+        dataSource.readSettings().map { settings ->
             validateAndCorrect(settings)
         }
-    }
 
-    override suspend fun updateSettings(settings: LauncherSettings): Result<Unit> {
-        return try {
+    override suspend fun updateSettings(settings: LauncherSettings): Result<Unit> =
+        try {
             val validated = validateAndCorrect(settings)
             dataSource.writeSettings(validated)
             logger.log("Settings updated: autoLaunch=${validated.autoLaunchEnabled}, battery=${validated.batteryIndicatorMode}")
@@ -40,10 +38,9 @@ class SettingsRepositoryImpl(
             logger.log("Failed to update settings: ${e.message}")
             Result.failure(e)
         }
-    }
 
-    override suspend fun resetToDefaults(): Result<Unit> {
-        return try {
+    override suspend fun resetToDefaults(): Result<Unit> =
+        try {
             dataSource.clearSettings()
             logger.log("Settings reset to defaults")
             Result.success(Unit)
@@ -51,7 +48,6 @@ class SettingsRepositoryImpl(
             logger.log("Failed to reset settings: ${e.message}")
             Result.failure(e)
         }
-    }
 
     private suspend fun validateAndCorrect(settings: LauncherSettings): LauncherSettings {
         val installedApps = appRepository.getApps().first()
@@ -66,7 +62,7 @@ class SettingsRepositoryImpl(
 
         return settings.copy(
             leftQuickAction = if (leftValid) settings.leftQuickAction else QuickActionConfig.defaultLeft(),
-            rightQuickAction = if (rightValid) settings.rightQuickAction else QuickActionConfig.defaultRight()
+            rightQuickAction = if (rightValid) settings.rightQuickAction else QuickActionConfig.defaultRight(),
         )
     }
 }

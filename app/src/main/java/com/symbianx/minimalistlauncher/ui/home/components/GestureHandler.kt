@@ -49,10 +49,9 @@ fun GestureHandler(
             modifier
                 .pointerInput(Unit) {
                     detectTapGestures(
-                        onLongPress = { onLongPress() }
+                        onLongPress = { onLongPress() },
                     )
-                }
-                .pointerInput(Unit) {
+                }.pointerInput(Unit) {
                     detectDragGestures(
                         onDragStart = { offset ->
                             dragStartX = offset.x

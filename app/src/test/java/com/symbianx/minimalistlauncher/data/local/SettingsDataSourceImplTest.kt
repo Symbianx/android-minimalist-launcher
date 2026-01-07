@@ -9,7 +9,6 @@ import com.symbianx.minimalistlauncher.domain.model.BatteryThresholdMode
 import com.symbianx.minimalistlauncher.domain.model.LauncherSettings
 import com.symbianx.minimalistlauncher.domain.model.QuickActionConfig
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -48,10 +47,11 @@ class SettingsDataSourceImplTest {
         val testDispatcher = StandardTestDispatcher()
         testScope = TestScope(testDispatcher + Job())
 
-        testDataStore = PreferenceDataStoreFactory.create(
-            scope = CoroutineScope(testDispatcher + Job()),
-            produceFile = { testContext.preferencesDataStoreFile("test_settings") }
-        )
+        testDataStore =
+            PreferenceDataStoreFactory.create(
+                scope = CoroutineScope(testDispatcher + Job()),
+                produceFile = { testContext.preferencesDataStoreFile("test_settings") },
+            )
 
         dataSource = SettingsDataSourceImpl(testContext, testDataStore)
     }
@@ -62,87 +62,95 @@ class SettingsDataSourceImplTest {
     }
 
     @Test
-    fun `readSettings returns defaults when no data exists`() = testScope.runTest {
-        // When reading settings for the first time
-        val settings = dataSource.readSettings().first()
+    fun `readSettings returns defaults when no data exists`() =
+        testScope.runTest {
+            // When reading settings for the first time
+            val settings = dataSource.readSettings().first()
 
-        // Then defaults should be returned
-        assertEquals(true, settings.autoLaunchEnabled)
-        assertEquals("com.google.android.dialer", settings.leftQuickAction.packageName)
-        assertEquals("com.google.android.GoogleCamera", settings.rightQuickAction.packageName)
-        assertEquals(BatteryThresholdMode.BELOW_50, settings.batteryIndicatorMode)
-    }
-
-    @Test
-    fun `writeSettings and readSettings round-trip preserves data`() = testScope.runTest {
-        // Given custom settings
-        val customSettings = LauncherSettings(
-            autoLaunchEnabled = false,
-            leftQuickAction = QuickActionConfig(
-                packageName = "com.custom.app1",
-                label = "Custom App 1",
-                isDefault = false
-            ),
-            rightQuickAction = QuickActionConfig(
-                packageName = "com.custom.app2",
-                label = "Custom App 2",
-                isDefault = false
-            ),
-            batteryIndicatorMode = BatteryThresholdMode.ALWAYS,
-            lastModified = 12345L
-        )
-
-        // When writing and reading back
-        dataSource.writeSettings(customSettings)
-        val readSettings = dataSource.readSettings().first()
-
-        // Then all fields should match
-        assertEquals(customSettings.autoLaunchEnabled, readSettings.autoLaunchEnabled)
-        assertEquals(customSettings.leftQuickAction.packageName, readSettings.leftQuickAction.packageName)
-        assertEquals(customSettings.leftQuickAction.label, readSettings.leftQuickAction.label)
-        assertEquals(customSettings.rightQuickAction.packageName, readSettings.rightQuickAction.packageName)
-        assertEquals(customSettings.rightQuickAction.label, readSettings.rightQuickAction.label)
-        assertEquals(customSettings.batteryIndicatorMode, readSettings.batteryIndicatorMode)
-    }
+            // Then defaults should be returned
+            assertEquals(true, settings.autoLaunchEnabled)
+            assertEquals("com.google.android.dialer", settings.leftQuickAction.packageName)
+            assertEquals("com.google.android.GoogleCamera", settings.rightQuickAction.packageName)
+            assertEquals(BatteryThresholdMode.BELOW_50, settings.batteryIndicatorMode)
+        }
 
     @Test
-    fun `clearSettings removes all data and returns defaults`() = testScope.runTest {
-        // Given settings have been written
-        val customSettings = LauncherSettings(
-            autoLaunchEnabled = false,
-            leftQuickAction = QuickActionConfig("com.test", "Test", false),
-            rightQuickAction = QuickActionConfig("com.test2", "Test2", false),
-            batteryIndicatorMode = BatteryThresholdMode.NEVER,
-            lastModified = 99999L
-        )
-        dataSource.writeSettings(customSettings)
+    fun `writeSettings and readSettings round-trip preserves data`() =
+        testScope.runTest {
+            // Given custom settings
+            val customSettings =
+                LauncherSettings(
+                    autoLaunchEnabled = false,
+                    leftQuickAction =
+                        QuickActionConfig(
+                            packageName = "com.custom.app1",
+                            label = "Custom App 1",
+                            isDefault = false,
+                        ),
+                    rightQuickAction =
+                        QuickActionConfig(
+                            packageName = "com.custom.app2",
+                            label = "Custom App 2",
+                            isDefault = false,
+                        ),
+                    batteryIndicatorMode = BatteryThresholdMode.ALWAYS,
+                    lastModified = 12345L,
+                )
 
-        // When clearing settings
-        dataSource.clearSettings()
-        val settings = dataSource.readSettings().first()
+            // When writing and reading back
+            dataSource.writeSettings(customSettings)
+            val readSettings = dataSource.readSettings().first()
 
-        // Then defaults should be returned
-        assertEquals(true, settings.autoLaunchEnabled)
-        assertEquals("com.google.android.dialer", settings.leftQuickAction.packageName)
-        assertEquals("com.google.android.GoogleCamera", settings.rightQuickAction.packageName)
-        assertEquals(BatteryThresholdMode.BELOW_50, settings.batteryIndicatorMode)
-    }
+            // Then all fields should match
+            assertEquals(customSettings.autoLaunchEnabled, readSettings.autoLaunchEnabled)
+            assertEquals(customSettings.leftQuickAction.packageName, readSettings.leftQuickAction.packageName)
+            assertEquals(customSettings.leftQuickAction.label, readSettings.leftQuickAction.label)
+            assertEquals(customSettings.rightQuickAction.packageName, readSettings.rightQuickAction.packageName)
+            assertEquals(customSettings.rightQuickAction.label, readSettings.rightQuickAction.label)
+            assertEquals(customSettings.batteryIndicatorMode, readSettings.batteryIndicatorMode)
+        }
 
     @Test
-    fun `writeSettings updates lastModified timestamp`() = testScope.runTest {
-        // Given initial settings
-        val initialSettings = LauncherSettings()
-        dataSource.writeSettings(initialSettings)
-        val firstRead = dataSource.readSettings().first()
+    fun `clearSettings removes all data and returns defaults`() =
+        testScope.runTest {
+            // Given settings have been written
+            val customSettings =
+                LauncherSettings(
+                    autoLaunchEnabled = false,
+                    leftQuickAction = QuickActionConfig("com.test", "Test", false),
+                    rightQuickAction = QuickActionConfig("com.test2", "Test2", false),
+                    batteryIndicatorMode = BatteryThresholdMode.NEVER,
+                    lastModified = 99999L,
+                )
+            dataSource.writeSettings(customSettings)
 
-        // When writing again with different timestamp
-        Thread.sleep(10) // Ensure time difference
-        val updatedSettings = initialSettings.copy(autoLaunchEnabled = false)
-        dataSource.writeSettings(updatedSettings)
-        val secondRead = dataSource.readSettings().first()
+            // When clearing settings
+            dataSource.clearSettings()
+            val settings = dataSource.readSettings().first()
 
-        // Then timestamp should be updated (implementation should set current time)
-        // Note: Implementation will override lastModified with current time
-        assert(secondRead.lastModified >= firstRead.lastModified)
-    }
+            // Then defaults should be returned
+            assertEquals(true, settings.autoLaunchEnabled)
+            assertEquals("com.google.android.dialer", settings.leftQuickAction.packageName)
+            assertEquals("com.google.android.GoogleCamera", settings.rightQuickAction.packageName)
+            assertEquals(BatteryThresholdMode.BELOW_50, settings.batteryIndicatorMode)
+        }
+
+    @Test
+    fun `writeSettings updates lastModified timestamp`() =
+        testScope.runTest {
+            // Given initial settings
+            val initialSettings = LauncherSettings()
+            dataSource.writeSettings(initialSettings)
+            val firstRead = dataSource.readSettings().first()
+
+            // When writing again with different timestamp
+            Thread.sleep(10) // Ensure time difference
+            val updatedSettings = initialSettings.copy(autoLaunchEnabled = false)
+            dataSource.writeSettings(updatedSettings)
+            val secondRead = dataSource.readSettings().first()
+
+            // Then timestamp should be updated (implementation should set current time)
+            // Note: Implementation will override lastModified with current time
+            assert(secondRead.lastModified >= firstRead.lastModified)
+        }
 }

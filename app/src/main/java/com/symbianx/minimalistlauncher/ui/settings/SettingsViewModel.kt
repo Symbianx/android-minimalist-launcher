@@ -9,7 +9,6 @@ import com.symbianx.minimalistlauncher.data.repository.SettingsRepositoryImpl
 import com.symbianx.minimalistlauncher.data.system.AppListDataSourceImpl
 import com.symbianx.minimalistlauncher.domain.model.App
 import com.symbianx.minimalistlauncher.domain.model.BatteryThresholdMode
-import com.symbianx.minimalistlauncher.domain.model.LauncherSettings
 import com.symbianx.minimalistlauncher.domain.model.QuickActionConfig
 import com.symbianx.minimalistlauncher.domain.usecase.LoadSettingsUseCase
 import com.symbianx.minimalistlauncher.util.SettingsLogger

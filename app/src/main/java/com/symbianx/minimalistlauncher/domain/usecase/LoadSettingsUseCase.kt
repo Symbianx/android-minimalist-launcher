@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
  * @param repository Settings repository
  */
 class LoadSettingsUseCase(
-    private val repository: SettingsRepository
+    private val repository: SettingsRepository,
 ) {
     /**
      * Loads launcher settings as a Flow.

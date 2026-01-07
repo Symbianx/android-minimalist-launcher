@@ -27,66 +27,71 @@ class LoadSettingsUseCaseTest {
     }
 
     @Test
-    fun `invoke returns settings from repository`() = runTest {
-        // Given repository has settings
-        val expectedSettings = LauncherSettings(
-            autoLaunchEnabled = false,
-            leftQuickAction = QuickActionConfig("com.test", "Test", false),
-            rightQuickAction = QuickActionConfig("com.test2", "Test2", false),
-            batteryIndicatorMode = BatteryThresholdMode.ALWAYS,
-            lastModified = 12345L
-        )
-        mockRepository.settings = expectedSettings
+    fun `invoke returns settings from repository`() =
+        runTest {
+            // Given repository has settings
+            val expectedSettings =
+                LauncherSettings(
+                    autoLaunchEnabled = false,
+                    leftQuickAction = QuickActionConfig("com.test", "Test", false),
+                    rightQuickAction = QuickActionConfig("com.test2", "Test2", false),
+                    batteryIndicatorMode = BatteryThresholdMode.ALWAYS,
+                    lastModified = 12345L,
+                )
+            mockRepository.settings = expectedSettings
 
-        // When invoking use case
-        val settings = useCase().first()
-
-        // Then settings should match repository settings
-        assertEquals(expectedSettings, settings)
-    }
-
-    @Test
-    fun `invoke returns Flow that emits immediately`() = runTest {
-        // Given repository has default settings
-        mockRepository.settings = LauncherSettings()
-
-        // When invoking use case
-        val flow = useCase()
-
-        // Then flow should emit immediately
-        val settings = flow.first()
-        assertEquals(LauncherSettings(), settings)
-    }
-
-    @Test
-    fun `invoke creates new Flow on each call`() = runTest {
-        // Given initial settings
-        mockRepository.settings = LauncherSettings(autoLaunchEnabled = true)
-
-        // When invoking use case twice
-        val firstSettings = useCase().first()
-        
-        // And settings change
-        mockRepository.settings = LauncherSettings(autoLaunchEnabled = false)
-        
-        // Then second call should get updated settings
-        val secondSettings = useCase().first()
-        
-        assertEquals(true, firstSettings.autoLaunchEnabled)
-        assertEquals(false, secondSettings.autoLaunchEnabled)
-    }
-
-    @Test
-    fun `invoke handles all battery threshold modes`() = runTest {
-        // Test each battery threshold mode
-        val modes = BatteryThresholdMode.values()
-        
-        for (mode in modes) {
-            mockRepository.settings = LauncherSettings(batteryIndicatorMode = mode)
+            // When invoking use case
             val settings = useCase().first()
-            assertEquals(mode, settings.batteryIndicatorMode)
+
+            // Then settings should match repository settings
+            assertEquals(expectedSettings, settings)
         }
-    }
+
+    @Test
+    fun `invoke returns Flow that emits immediately`() =
+        runTest {
+            // Given repository has default settings
+            mockRepository.settings = LauncherSettings()
+
+            // When invoking use case
+            val flow = useCase()
+
+            // Then flow should emit immediately
+            val settings = flow.first()
+            assertEquals(LauncherSettings(), settings)
+        }
+
+    @Test
+    fun `invoke creates new Flow on each call`() =
+        runTest {
+            // Given initial settings
+            mockRepository.settings = LauncherSettings(autoLaunchEnabled = true)
+
+            // When invoking use case twice
+            val firstSettings = useCase().first()
+
+            // And settings change
+            mockRepository.settings = LauncherSettings(autoLaunchEnabled = false)
+
+            // Then second call should get updated settings
+            val secondSettings = useCase().first()
+
+            assertEquals(true, firstSettings.autoLaunchEnabled)
+            assertEquals(false, secondSettings.autoLaunchEnabled)
+        }
+
+    @Test
+    fun `invoke handles all battery threshold modes`() =
+        runTest {
+            // Test each battery threshold mode
+            val modes = BatteryThresholdMode.values()
+
+            for (mode in modes) {
+                mockRepository.settings = LauncherSettings(batteryIndicatorMode = mode)
+                val settings = useCase().first()
+                assertEquals(mode, settings.batteryIndicatorMode)
+            }
+        }
 
     // Test double
     private class FakeSettingsRepository : SettingsRepository {

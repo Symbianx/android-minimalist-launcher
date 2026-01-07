@@ -50,14 +50,14 @@ import com.symbianx.minimalistlauncher.ui.home.HomeViewModel
  * Modern Material3 design with smooth corners and clean aesthetics.
  * Shows minimalistic app icons for better visual identification.
  *
- * @param onAppSelected Callback when an app is selected
+ * @param onAppSelect Callback when an app is selected
  * @param onDismiss Callback when dialog is dismissed
  * @param modifier Modifier for the dialog
  * @param homeViewModel ViewModel for accessing app list
  */
 @Composable
 fun AppPickerDialog(
-    onAppSelected: (App) -> Unit,
+    onAppSelect: (App) -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     homeViewModel: HomeViewModel = viewModel(),
@@ -144,7 +144,7 @@ fun AppPickerDialog(
                         AppPickerItem(
                             app = app,
                             onClick = {
-                                onAppSelected(app)
+                                onAppSelect(app)
                                 onDismiss()
                             },
                         )
@@ -180,10 +180,11 @@ private fun AppPickerItem(
         remember(app.packageName) {
             try {
                 val drawable = packageManager.getApplicationIcon(app.packageName)
-                
+
                 // Try to extract monochrome icon from adaptive icon (API 33+)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && 
-                    drawable is AdaptiveIconDrawable) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                    drawable is AdaptiveIconDrawable
+                ) {
                     val monochromeDrawable = drawable.monochrome
                     if (monochromeDrawable != null) {
                         // Return monochrome icon with true flag

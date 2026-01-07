@@ -35,8 +35,8 @@ import com.symbianx.minimalistlauncher.domain.model.DeviceStatus
 @Composable
 fun StatusBar(
     deviceStatus: DeviceStatus,
-    batteryIndicatorMode: BatteryThresholdMode = BatteryThresholdMode.BELOW_50,
     modifier: Modifier = Modifier,
+    batteryIndicatorMode: BatteryThresholdMode = BatteryThresholdMode.BELOW_50,
     onClockTap: () -> Unit = {},
 ) {
     Column(

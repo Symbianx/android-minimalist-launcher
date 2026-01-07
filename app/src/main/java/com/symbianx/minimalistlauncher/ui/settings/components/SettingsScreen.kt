@@ -49,7 +49,7 @@ import com.symbianx.minimalistlauncher.ui.settings.SettingsViewModel
 fun SettingsScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: SettingsViewModel = viewModel()
+    viewModel: SettingsViewModel = viewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val showAppPicker by viewModel.showAppPicker.collectAsState()
@@ -64,20 +64,21 @@ fun SettingsScreen(
                     IconButton(onClick = onBack) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = "Back",
                         )
                     }
-                }
+                },
             )
-        }
+        },
     ) { paddingValues ->
         when (val state = uiState) {
             is SettingsUiState.Loading -> {
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
-                    contentAlignment = Alignment.Center
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues),
+                    contentAlignment = Alignment.Center,
                 ) {
                     CircularProgressIndicator()
                 }
@@ -91,20 +92,21 @@ fun SettingsScreen(
                     onRightQuickActionClick = { viewModel.showAppPickerFor(AppPickerTarget.RIGHT) },
                     onBatteryModeChange = viewModel::updateBatteryMode,
                     onResetClick = viewModel::showResetDialog,
-                    modifier = Modifier.padding(paddingValues)
+                    modifier = Modifier.padding(paddingValues),
                 )
             }
 
             is SettingsUiState.Error -> {
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
-                    contentAlignment = Alignment.Center
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues),
+                    contentAlignment = Alignment.Center,
                 ) {
                     Text(
                         text = state.message,
-                        color = MaterialTheme.colorScheme.error
+                        color = MaterialTheme.colorScheme.error,
                     )
                 }
             }
@@ -114,7 +116,7 @@ fun SettingsScreen(
     // App picker dialog
     showAppPicker?.let { target ->
         AppPickerDialog(
-            onAppSelected = { app ->
+            onAppSelect = { app ->
                 when (target) {
                     AppPickerTarget.LEFT -> viewModel.updateLeftQuickAction(app)
                     AppPickerTarget.RIGHT -> viewModel.updateRightQuickAction(app)
@@ -144,20 +146,21 @@ private fun SettingsContent(
     onRightQuickActionClick: () -> Unit,
     onBatteryModeChange: (BatteryThresholdMode) -> Unit,
     onResetClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(vertical = 8.dp)
+        modifier =
+            modifier
+                .fillMaxSize()
+                .padding(vertical = 8.dp),
     ) {
         // Auto-launch section
         item {
             SwitchPreference(
                 title = "Auto-launch apps",
-                description = "Automatically open app when search returns single result",
                 checked = settings.autoLaunchEnabled,
-                onCheckedChange = onAutoLaunchChange
+                onCheckedChange = onAutoLaunchChange,
+                description = "Automatically open app when search returns single result",
             )
         }
 
@@ -168,7 +171,7 @@ private fun SettingsContent(
             PreferenceItem(
                 title = "Left quick action",
                 description = settings.leftQuickAction.label,
-                onClick = onLeftQuickActionClick
+                onClick = onLeftQuickActionClick,
             )
         }
 
@@ -176,7 +179,7 @@ private fun SettingsContent(
             PreferenceItem(
                 title = "Right quick action",
                 description = settings.rightQuickAction.label,
-                onClick = onRightQuickActionClick
+                onClick = onRightQuickActionClick,
             )
         }
 
@@ -187,7 +190,7 @@ private fun SettingsContent(
             BatteryThresholdPreference(
                 title = "Battery indicator",
                 selectedMode = settings.batteryIndicatorMode,
-                onModeSelected = onBatteryModeChange
+                onModeSelect = onBatteryModeChange,
             )
         }
 
@@ -198,7 +201,7 @@ private fun SettingsContent(
             PreferenceItem(
                 title = "Reset to defaults",
                 description = "Restore all settings to default values",
-                onClick = onResetClick
+                onClick = onResetClick,
             )
         }
     }
@@ -210,37 +213,37 @@ private fun SettingsContent(
 @Composable
 private fun SwitchPreference(
     title: String,
-    description: String,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    description: String,
+    modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-                onClick = { onCheckedChange(!checked) }
-            )
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = { onCheckedChange(!checked) },
+                ).padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyLarge,
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = description,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
         Switch(
             checked = checked,
-            onCheckedChange = onCheckedChange
+            onCheckedChange = onCheckedChange,
         )
     }
 }
@@ -253,27 +256,27 @@ private fun PreferenceItem(
     title: String,
     description: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-                onClick = onClick
-            )
-            .padding(horizontal = 16.dp, vertical = 12.dp)
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = onClick,
+                ).padding(horizontal = 16.dp, vertical = 12.dp),
     ) {
         Text(
             text = title,
-            style = MaterialTheme.typography.bodyLarge
+            style = MaterialTheme.typography.bodyLarge,
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = description,
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }
@@ -285,45 +288,47 @@ private fun PreferenceItem(
 private fun BatteryThresholdPreference(
     title: String,
     selectedMode: BatteryThresholdMode,
-    onModeSelected: (BatteryThresholdMode) -> Unit,
-    modifier: Modifier = Modifier
+    onModeSelect: (BatteryThresholdMode) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 12.dp)
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 12.dp),
     ) {
         Text(
             text = title,
-            style = MaterialTheme.typography.bodyLarge
+            style = MaterialTheme.typography.bodyLarge,
         )
         Spacer(modifier = Modifier.height(8.dp))
 
         BatteryThresholdMode.values().forEach { mode ->
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null,
-                        onClick = { onModeSelected(mode) }
-                    )
-                    .padding(vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                            onClick = { onModeSelect(mode) },
+                        ).padding(vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 androidx.compose.material3.RadioButton(
                     selected = mode == selectedMode,
-                    onClick = { onModeSelected(mode) }
+                    onClick = { onModeSelect(mode) },
                 )
                 Spacer(modifier = Modifier.padding(start = 8.dp))
                 Text(
-                    text = when (mode) {
-                        BatteryThresholdMode.ALWAYS -> "Always show"
-                        BatteryThresholdMode.BELOW_50 -> "Show below 50%"
-                        BatteryThresholdMode.BELOW_20 -> "Show below 20%"
-                        BatteryThresholdMode.NEVER -> "Never show"
-                    },
-                    style = MaterialTheme.typography.bodyMedium
+                    text =
+                        when (mode) {
+                            BatteryThresholdMode.ALWAYS -> "Always show"
+                            BatteryThresholdMode.BELOW_50 -> "Show below 50%"
+                            BatteryThresholdMode.BELOW_20 -> "Show below 20%"
+                            BatteryThresholdMode.NEVER -> "Never show"
+                        },
+                    style = MaterialTheme.typography.bodyMedium,
                 )
             }
         }

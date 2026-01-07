@@ -58,7 +58,7 @@ class HomeViewModel(
                 it.initialize()
             }
         }
-    
+
     private val settingsRepository =
         SettingsRepositoryImpl(
             SettingsDataSourceImpl(application.applicationContext),

@@ -75,11 +75,11 @@ fun HomeScreen(
                         CircularBatteryIndicator(
                             batteryPercentage = deviceStatus.batteryPercentage,
                             isCharging = deviceStatus.isCharging,
-                            thresholdMode = settings.batteryIndicatorMode,
                             modifier =
                                 Modifier
                                     .align(Alignment.TopCenter)
                                     .offset(y = 8.dp),
+                            thresholdMode = settings.batteryIndicatorMode,
                         )
                     }
                     // Unlock count display at top-left
@@ -92,12 +92,12 @@ fun HomeScreen(
                     // Status bar below circular indicator
                     StatusBar(
                         deviceStatus = deviceStatus,
-                        batteryIndicatorMode = settings.batteryIndicatorMode,
-                        onClockTap = { viewModel.openClockApp() },
                         modifier =
                             Modifier
                                 .align(Alignment.TopCenter)
                                 .padding(top = 80.dp),
+                        batteryIndicatorMode = settings.batteryIndicatorMode,
+                        onClockTap = { viewModel.openClockApp() },
                     )
 
                     // Favorites list below status bar

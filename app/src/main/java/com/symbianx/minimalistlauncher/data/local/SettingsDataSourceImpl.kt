@@ -21,7 +21,7 @@ import java.io.IOException
  * DataStore extension for settings preferences.
  */
 private val Context.settingsDataStore: DataStore<Preferences> by preferencesDataStore(
-    name = "launcher_settings"
+    name = "launcher_settings",
 )
 
 /**
@@ -33,9 +33,8 @@ private val Context.settingsDataStore: DataStore<Preferences> by preferencesData
  */
 class SettingsDataSourceImpl(
     private val context: Context,
-    private val dataStore: DataStore<Preferences> = context.settingsDataStore
+    private val dataStore: DataStore<Preferences> = context.settingsDataStore,
 ) : SettingsDataSource {
-
     private object Keys {
         val AUTO_LAUNCH_ENABLED = booleanPreferencesKey("auto_launch_enabled")
         val LEFT_QUICK_ACTION_PACKAGE = stringPreferencesKey("left_quick_action_package")
@@ -46,41 +45,44 @@ class SettingsDataSourceImpl(
         val LAST_MODIFIED = longPreferencesKey("last_modified")
     }
 
-    override fun readSettings(): Flow<LauncherSettings> {
-        return dataStore.data
+    override fun readSettings(): Flow<LauncherSettings> =
+        dataStore.data
             .catch { exception ->
                 if (exception is IOException) {
                     emit(emptyPreferences())
                 } else {
                     throw exception
                 }
-            }
-            .map { preferences ->
+            }.map { preferences ->
                 LauncherSettings(
                     autoLaunchEnabled = preferences[Keys.AUTO_LAUNCH_ENABLED] ?: true,
-                    leftQuickAction = QuickActionConfig(
-                        packageName = preferences[Keys.LEFT_QUICK_ACTION_PACKAGE] 
-                            ?: "com.google.android.dialer",
-                        label = preferences[Keys.LEFT_QUICK_ACTION_LABEL] ?: "Phone",
-                        isDefault = preferences[Keys.LEFT_QUICK_ACTION_PACKAGE] == null
-                    ),
-                    rightQuickAction = QuickActionConfig(
-                        packageName = preferences[Keys.RIGHT_QUICK_ACTION_PACKAGE] 
-                            ?: "com.google.android.GoogleCamera",
-                        label = preferences[Keys.RIGHT_QUICK_ACTION_LABEL] ?: "Camera",
-                        isDefault = preferences[Keys.RIGHT_QUICK_ACTION_PACKAGE] == null
-                    ),
-                    batteryIndicatorMode = preferences[Keys.BATTERY_THRESHOLD_MODE]?.let { 
-                        try {
-                            BatteryThresholdMode.valueOf(it)
-                        } catch (e: IllegalArgumentException) {
-                            BatteryThresholdMode.BELOW_50
-                        }
-                    } ?: BatteryThresholdMode.BELOW_50,
-                    lastModified = preferences[Keys.LAST_MODIFIED] ?: System.currentTimeMillis()
+                    leftQuickAction =
+                        QuickActionConfig(
+                            packageName =
+                                preferences[Keys.LEFT_QUICK_ACTION_PACKAGE]
+                                    ?: "com.google.android.dialer",
+                            label = preferences[Keys.LEFT_QUICK_ACTION_LABEL] ?: "Phone",
+                            isDefault = preferences[Keys.LEFT_QUICK_ACTION_PACKAGE] == null,
+                        ),
+                    rightQuickAction =
+                        QuickActionConfig(
+                            packageName =
+                                preferences[Keys.RIGHT_QUICK_ACTION_PACKAGE]
+                                    ?: "com.google.android.GoogleCamera",
+                            label = preferences[Keys.RIGHT_QUICK_ACTION_LABEL] ?: "Camera",
+                            isDefault = preferences[Keys.RIGHT_QUICK_ACTION_PACKAGE] == null,
+                        ),
+                    batteryIndicatorMode =
+                        preferences[Keys.BATTERY_THRESHOLD_MODE]?.let {
+                            try {
+                                BatteryThresholdMode.valueOf(it)
+                            } catch (e: IllegalArgumentException) {
+                                BatteryThresholdMode.BELOW_50
+                            }
+                        } ?: BatteryThresholdMode.BELOW_50,
+                    lastModified = preferences[Keys.LAST_MODIFIED] ?: System.currentTimeMillis(),
                 )
             }
-    }
 
     override suspend fun writeSettings(settings: LauncherSettings) {
         dataStore.edit { preferences ->

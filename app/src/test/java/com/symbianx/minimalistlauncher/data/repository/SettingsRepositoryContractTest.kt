@@ -37,78 +37,86 @@ class SettingsRepositoryContractTest {
     }
 
     @Test
-    fun `getSettings emits default settings when data source is empty`() = runTest {
-        // Given data source returns defaults
-        mockDataSource.settings = LauncherSettings()
+    fun `getSettings emits default settings when data source is empty`() =
+        runTest {
+            // Given data source returns defaults
+            mockDataSource.settings = LauncherSettings()
 
-        // When getting settings
-        val settings = repository.getSettings().first()
+            // When getting settings
+            val settings = repository.getSettings().first()
 
-        // Then defaults should be emitted
-        assertEquals(true, settings.autoLaunchEnabled)
-        assertEquals("com.google.android.dialer", settings.leftQuickAction.packageName)
-        assertEquals("com.google.android.GoogleCamera", settings.rightQuickAction.packageName)
-        assertEquals(BatteryThresholdMode.BELOW_50, settings.batteryIndicatorMode)
-    }
-
-    @Test
-    fun `getSettings emits immediately without suspension`() = runTest {
-        // Given data source is ready
-        mockDataSource.settings = LauncherSettings()
-
-        // When getting settings
-        val settings = repository.getSettings().first()
-
-        // Then settings should be available immediately
-        assertEquals(LauncherSettings(), settings)
-    }
+            // Then defaults should be emitted
+            assertEquals(true, settings.autoLaunchEnabled)
+            assertEquals("com.google.android.dialer", settings.leftQuickAction.packageName)
+            assertEquals("com.google.android.GoogleCamera", settings.rightQuickAction.packageName)
+            assertEquals(BatteryThresholdMode.BELOW_50, settings.batteryIndicatorMode)
+        }
 
     @Test
-    fun `getSettings validates installed apps and corrects invalid packages`() = runTest {
-        // Given settings with uninstalled app
-        mockDataSource.settings = LauncherSettings(
-            leftQuickAction = QuickActionConfig("com.uninstalled.app", "Uninstalled", false)
-        )
-        mockAppRepository.installedApps = listOf(
-            App("com.google.android.dialer", "Phone", Intent())
-        )
+    fun `getSettings emits immediately without suspension`() =
+        runTest {
+            // Given data source is ready
+            mockDataSource.settings = LauncherSettings()
 
-        // When getting settings
-        val settings = repository.getSettings().first()
+            // When getting settings
+            val settings = repository.getSettings().first()
 
-        // Then invalid package should be reverted to default
-        assertEquals("com.google.android.dialer", settings.leftQuickAction.packageName)
-    }
+            // Then settings should be available immediately
+            assertEquals(LauncherSettings(), settings)
+        }
 
     @Test
-    fun `updateSettings returns success for valid settings`() = runTest {
-        // Given valid settings
-        val newSettings = LauncherSettings(autoLaunchEnabled = false)
-        mockAppRepository.installedApps = listOf(
-            App("com.google.android.dialer", "Phone", Intent()),
-            App("com.google.android.GoogleCamera", "Camera", Intent())
-        )
+    fun `getSettings validates installed apps and corrects invalid packages`() =
+        runTest {
+            // Given settings with uninstalled app
+            mockDataSource.settings =
+                LauncherSettings(
+                    leftQuickAction = QuickActionConfig("com.uninstalled.app", "Uninstalled", false),
+                )
+            mockAppRepository.installedApps =
+                listOf(
+                    App("com.google.android.dialer", "Phone", Intent()),
+                )
 
-        // When updating settings
-        val result = repository.updateSettings(newSettings)
+            // When getting settings
+            val settings = repository.getSettings().first()
 
-        // Then result should be success
-        assertTrue(result.isSuccess)
-        assertEquals(newSettings.autoLaunchEnabled, mockDataSource.settings.autoLaunchEnabled)
-    }
+            // Then invalid package should be reverted to default
+            assertEquals("com.google.android.dialer", settings.leftQuickAction.packageName)
+        }
 
     @Test
-    fun `resetToDefaults clears data source and returns success`() = runTest {
-        // Given settings have been customized
-        mockDataSource.settings = LauncherSettings(autoLaunchEnabled = false)
+    fun `updateSettings returns success for valid settings`() =
+        runTest {
+            // Given valid settings
+            val newSettings = LauncherSettings(autoLaunchEnabled = false)
+            mockAppRepository.installedApps =
+                listOf(
+                    App("com.google.android.dialer", "Phone", Intent()),
+                    App("com.google.android.GoogleCamera", "Camera", Intent()),
+                )
 
-        // When resetting to defaults
-        val result = repository.resetToDefaults()
+            // When updating settings
+            val result = repository.updateSettings(newSettings)
 
-        // Then result should be success and data should be cleared
-        assertTrue(result.isSuccess)
-        assertTrue(mockDataSource.cleared)
-    }
+            // Then result should be success
+            assertTrue(result.isSuccess)
+            assertEquals(newSettings.autoLaunchEnabled, mockDataSource.settings.autoLaunchEnabled)
+        }
+
+    @Test
+    fun `resetToDefaults clears data source and returns success`() =
+        runTest {
+            // Given settings have been customized
+            mockDataSource.settings = LauncherSettings(autoLaunchEnabled = false)
+
+            // When resetting to defaults
+            val result = repository.resetToDefaults()
+
+            // Then result should be success and data should be cleared
+            assertTrue(result.isSuccess)
+            assertTrue(mockDataSource.cleared)
+        }
 
     // Test doubles
     private class FakeSettingsDataSource : SettingsDataSource {

@@ -16,12 +16,16 @@ sealed interface SettingsUiState {
      *
      * @property settings Current launcher settings
      */
-    data class Loaded(val settings: LauncherSettings) : SettingsUiState
+    data class Loaded(
+        val settings: LauncherSettings,
+    ) : SettingsUiState
 
     /**
      * Error state when settings cannot be loaded.
      *
      * @property message Error message to display
      */
-    data class Error(val message: String) : SettingsUiState
+    data class Error(
+        val message: String,
+    ) : SettingsUiState
 }

@@ -37,8 +37,8 @@ import com.symbianx.minimalistlauncher.domain.model.BatteryThresholdMode
 fun CircularBatteryIndicator(
     batteryPercentage: Int,
     isCharging: Boolean,
-    thresholdMode: BatteryThresholdMode = BatteryThresholdMode.BELOW_50,
     modifier: Modifier = Modifier,
+    thresholdMode: BatteryThresholdMode = BatteryThresholdMode.BELOW_50,
 ) {
     // Check if indicator should be shown based on threshold mode
     if (!thresholdMode.shouldShow(batteryPercentage)) {

@@ -15,14 +15,14 @@ import com.symbianx.minimalistlauncher.ui.theme.MinimalistLauncherTheme
 class SettingsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
+
         enableEdgeToEdge()
 
         setContent {
             MinimalistLauncherTheme {
                 SettingsScreen(
                     onBack = { finish() },
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
                 )
             }
         }
