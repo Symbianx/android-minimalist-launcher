@@ -21,14 +21,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
+import com.symbianx.minimalistlauncher.domain.model.BatteryThresholdMode
 
 /**
  * Circular battery indicator that displays battery level as a progress ring.
- * Always visible regardless of battery level.
+ * Visibility controlled by threshold mode setting.
  * On Pixel 8 Pro, positioned around camera notch area.
  *
  * @param batteryPercentage Current battery level (0-100)
  * @param isCharging Whether the device is currently charging
+ * @param thresholdMode When to show the indicator
  * @param modifier Modifier for the indicator
  */
 @Composable
@@ -36,7 +38,13 @@ fun CircularBatteryIndicator(
     batteryPercentage: Int,
     isCharging: Boolean,
     modifier: Modifier = Modifier,
+    thresholdMode: BatteryThresholdMode = BatteryThresholdMode.BELOW_50,
 ) {
+    // Check if indicator should be shown based on threshold mode
+    if (!thresholdMode.shouldShow(batteryPercentage)) {
+        return
+    }
+
     // Validate battery percentage
     if (batteryPercentage < 0 || batteryPercentage > 100) {
         return

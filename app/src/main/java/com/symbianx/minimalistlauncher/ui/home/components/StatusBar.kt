@@ -16,16 +16,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import com.symbianx.minimalistlauncher.domain.model.BatteryThresholdMode
 import com.symbianx.minimalistlauncher.domain.model.DeviceStatus
 
 /**
  * Status bar displaying time, date, and battery information.
  *
  * @param deviceStatus Current device status
+ * @param batteryIndicatorMode When to show battery indicator
  * @param modifier Modifier for the status bar
  * @param onClockTap Callback invoked when time/date area is tapped
  */
@@ -33,6 +36,7 @@ import com.symbianx.minimalistlauncher.domain.model.DeviceStatus
 fun StatusBar(
     deviceStatus: DeviceStatus,
     modifier: Modifier = Modifier,
+    batteryIndicatorMode: BatteryThresholdMode = BatteryThresholdMode.BELOW_50,
     onClockTap: () -> Unit = {},
 ) {
     Column(
@@ -44,10 +48,13 @@ fun StatusBar(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         // Battery percentage text - only show on non-Pixel 8 Pro devices
+        // Always reserve space to prevent layout shift, but make invisible when not shown
         if (!isPixel8Pro()) {
+            val shouldShow = batteryIndicatorMode.shouldShow(deviceStatus.batteryPercentage)
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.alpha(if (shouldShow) 1f else 0f),
             ) {
                 Text(
                     text = "${deviceStatus.batteryPercentage}%",
@@ -55,7 +62,7 @@ fun StatusBar(
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
                     modifier =
                         Modifier.semantics {
-                            contentDescription = "Battery percentage"
+                            contentDescription = if (shouldShow) "Battery percentage" else ""
                         },
                 )
 

@@ -1,5 +1,6 @@
 package com.symbianx.minimalistlauncher.ui.home
 
+import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,6 +13,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.symbianx.minimalistlauncher.ui.home.components.AppContextMenu
@@ -24,6 +26,7 @@ import com.symbianx.minimalistlauncher.ui.home.components.SearchView
 import com.symbianx.minimalistlauncher.ui.home.components.StatusBar
 import com.symbianx.minimalistlauncher.ui.home.components.UnlockCountDisplay
 import com.symbianx.minimalistlauncher.ui.home.components.isPixel8Pro
+import com.symbianx.minimalistlauncher.ui.settings.SettingsActivity
 
 /**
  * Main home screen composable for the minimalist launcher.
@@ -40,6 +43,8 @@ fun HomeScreen(
     val deviceStatus by viewModel.deviceStatus.collectAsState()
     val favorites by viewModel.favorites.collectAsState()
     val contextMenuApp by viewModel.contextMenuApp.collectAsState()
+    val settings by viewModel.settings.collectAsState()
+    val context = LocalContext.current
     val unlockCount by viewModel.unlockCountToday.collectAsState()
     val lastUnlockTimeAgo by viewModel.lastUnlockTimeAgo.collectAsState()
     val appLaunchOverlayState by viewModel.appLaunchOverlayState.collectAsState()
@@ -55,6 +60,10 @@ fun HomeScreen(
     ) {
         GestureHandler(
             onSwipeRightToLeft = { viewModel.activateSearch() },
+            onLongPress = {
+                // Launch SettingsActivity on long-press
+                context.startActivity(Intent(context, SettingsActivity::class.java))
+            },
             modifier = Modifier.fillMaxSize(),
         ) {
             Box(
@@ -70,6 +79,7 @@ fun HomeScreen(
                                 Modifier
                                     .align(Alignment.TopCenter)
                                     .offset(y = 8.dp),
+                            thresholdMode = settings.batteryIndicatorMode,
                         )
                     }
                     // Unlock count display at top-left
@@ -82,11 +92,12 @@ fun HomeScreen(
                     // Status bar below circular indicator
                     StatusBar(
                         deviceStatus = deviceStatus,
-                        onClockTap = { viewModel.openClockApp() },
                         modifier =
                             Modifier
                                 .align(Alignment.TopCenter)
                                 .padding(top = 80.dp),
+                        batteryIndicatorMode = settings.batteryIndicatorMode,
+                        onClockTap = { viewModel.openClockApp() },
                     )
 
                     // Favorites list below status bar
@@ -102,8 +113,10 @@ fun HomeScreen(
 
                     // Quick action buttons at bottom
                     QuickActionButtons(
-                        onPhoneClick = { viewModel.openPhoneDialer() },
-                        onCameraClick = { viewModel.openCamera() },
+                        leftAction = settings.leftQuickAction,
+                        rightAction = settings.rightQuickAction,
+                        onLeftClick = { viewModel.launchQuickAction(settings.leftQuickAction) },
+                        onRightClick = { viewModel.launchQuickAction(settings.rightQuickAction) },
                         modifier = Modifier.align(Alignment.BottomCenter),
                     )
                 }
@@ -116,7 +129,7 @@ fun HomeScreen(
             onAppClick = { viewModel.launchApp(it) },
             onAppLongPress = { viewModel.showContextMenu(it) },
             onSwipeBack = { viewModel.deactivateSearch() },
-            autoLaunchEnabled = viewModel.autoLaunchEnabled,
+            autoLaunchEnabled = settings.autoLaunchEnabled,
             autoLaunchDelayMs = viewModel.autoLaunchDelayMs,
             modifier = Modifier.fillMaxSize(),
         )

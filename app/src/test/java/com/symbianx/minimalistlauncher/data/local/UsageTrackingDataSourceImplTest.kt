@@ -94,9 +94,10 @@ class UsageTrackingDataSourceImplTest {
 
     @Test
     fun saveUsageData_persistsData() {
+        val today = java.text.SimpleDateFormat("yyyy-MM-dd").format(java.util.Date())
         val testData =
             UsageData(
-                currentDate = "2025-12-23",
+                currentDate = today,
                 unlockCount = 5,
                 lastUnlockTimestamp = 123456789L,
                 appLaunches =
