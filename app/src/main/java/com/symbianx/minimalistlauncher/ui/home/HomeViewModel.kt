@@ -7,20 +7,25 @@ import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.symbianx.minimalistlauncher.data.local.FavoritesDataSourceImpl
+import com.symbianx.minimalistlauncher.data.local.SettingsDataSourceImpl
 import com.symbianx.minimalistlauncher.data.repository.AppRepositoryImpl
 import com.symbianx.minimalistlauncher.data.repository.DeviceStatusRepositoryImpl
 import com.symbianx.minimalistlauncher.data.repository.FavoritesRepositoryImpl
+import com.symbianx.minimalistlauncher.data.repository.SettingsRepositoryImpl
 import com.symbianx.minimalistlauncher.data.system.AppListDataSourceImpl
 import com.symbianx.minimalistlauncher.data.system.BatteryDataSourceImpl
 import com.symbianx.minimalistlauncher.domain.model.App
 import com.symbianx.minimalistlauncher.domain.model.DeviceStatus
 import com.symbianx.minimalistlauncher.domain.model.FavoriteApp
+import com.symbianx.minimalistlauncher.domain.model.LauncherSettings
+import com.symbianx.minimalistlauncher.domain.model.QuickActionConfig
 import com.symbianx.minimalistlauncher.domain.model.SearchState
 import com.symbianx.minimalistlauncher.domain.usecase.LaunchAppUseCaseImpl
 import com.symbianx.minimalistlauncher.domain.usecase.ManageFavoritesUseCase
 import com.symbianx.minimalistlauncher.domain.usecase.ManageFavoritesUseCaseImpl
 import com.symbianx.minimalistlauncher.domain.usecase.SearchAppsUseCaseImpl
 import com.symbianx.minimalistlauncher.util.NavigationLogger
+import com.symbianx.minimalistlauncher.util.SettingsLogger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -53,13 +58,29 @@ class HomeViewModel(
                 it.initialize()
             }
         }
+    
+    private val settingsRepository =
+        SettingsRepositoryImpl(
+            SettingsDataSourceImpl(application.applicationContext),
+            appRepository,
+            SettingsLogger(),
+        )
 
     private val searchAppsUseCase = SearchAppsUseCaseImpl()
     private val launchAppUseCase = LaunchAppUseCaseImpl(application.applicationContext)
     private val manageFavoritesUseCase: ManageFavoritesUseCase = ManageFavoritesUseCaseImpl(favoritesRepository)
 
-    // Auto-Launch configuration (future: make configurable via settings)
-    val autoLaunchEnabled: Boolean = true
+    // Load settings
+    val settings: StateFlow<LauncherSettings> =
+        settingsRepository
+            .getSettings()
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.Eagerly,
+                initialValue = LauncherSettings.defaults(),
+            )
+
+    // Auto-launch configuration from settings
     val autoLaunchDelayMs: Long = 300L
 
     private val searchQuery = MutableStateFlow("")
@@ -68,7 +89,7 @@ class HomeViewModel(
 
     val contextMenuApp: StateFlow<App?> = _contextMenuApp
 
-    private val allApps: StateFlow<List<App>> =
+    val allApps: StateFlow<List<App>> =
         appRepository
             .getApps()
             .stateIn(
@@ -371,6 +392,37 @@ class HomeViewModel(
                         Toast.LENGTH_SHORT,
                     ).show()
             }
+        }
+    }
+
+    /**
+     * Launches a quick action app by package name.
+     */
+    fun launchQuickAction(quickAction: QuickActionConfig) {
+        try {
+            val intent =
+                getApplication<Application>()
+                    .packageManager
+                    .getLaunchIntentForPackage(quickAction.packageName)
+
+            if (intent != null) {
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                getApplication<Application>().startActivity(intent)
+            } else {
+                Toast
+                    .makeText(
+                        getApplication(),
+                        "${quickAction.label} not available",
+                        Toast.LENGTH_SHORT,
+                    ).show()
+            }
+        } catch (e: Exception) {
+            Toast
+                .makeText(
+                    getApplication(),
+                    "${quickAction.label} not available",
+                    Toast.LENGTH_SHORT,
+                ).show()
         }
     }
 

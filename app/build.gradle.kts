@@ -115,10 +115,15 @@ dependencies {
     // Kotlinx Serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
 
+    // DataStore Preferences
+    implementation("androidx.datastore:datastore-preferences:1.2.0")
+
     // Unit Testing
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
     testImplementation("org.robolectric:robolectric:4.16")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
+    testImplementation("org.mockito:mockito-core:5.10.0")
 
     // Android Testing
     androidTestImplementation(composeBom)
@@ -160,8 +165,8 @@ tasks.register<JacocoReport>("jacocoTestReport") {
             "**/Manifest*.*",
             "**/*Test*.*",
             "android/**/*.*",
-            "**/*\$ViewInjector*.*",
-            "**/*\$ViewBinder*.*",
+            $$"**/*$ViewInjector*.*",
+            $$"**/*$ViewBinder*.*",
             "**/Lambda$*.class",
             "**/Lambda.class",
             "**/*Lambda.class",

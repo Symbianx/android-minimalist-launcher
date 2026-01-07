@@ -3,6 +3,7 @@ package com.symbianx.minimalistlauncher.ui.home.components
 import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -16,12 +17,14 @@ import androidx.compose.ui.unit.dp
 import kotlin.math.abs
 
 /**
- * Detects swipe gestures to trigger different actions:
+ * Detects swipe and tap gestures to trigger different actions:
  * - Right-to-left: Activate search
  * - Bottom-up: Open device search
  * - Top-down (pull down): Open notification panel (works from anywhere on screen)
+ * - Long-press: Open settings
  *
  * @param onSwipeRightToLeft Callback when right-to-left swipe is detected
+ * @param onLongPress Callback when long-press is detected
  * @param modifier Modifier for the gesture detector
  * @param content Composable content that should detect gestures
  */
@@ -29,6 +32,7 @@ import kotlin.math.abs
 fun GestureHandler(
     onSwipeRightToLeft: () -> Unit,
     modifier: Modifier = Modifier,
+    onLongPress: () -> Unit = {},
     content: @Composable () -> Unit,
 ) {
     val context = LocalContext.current
@@ -43,6 +47,11 @@ fun GestureHandler(
     androidx.compose.foundation.layout.Box(
         modifier =
             modifier
+                .pointerInput(Unit) {
+                    detectTapGestures(
+                        onLongPress = { onLongPress() }
+                    )
+                }
                 .pointerInput(Unit) {
                     detectDragGestures(
                         onDragStart = { offset ->
