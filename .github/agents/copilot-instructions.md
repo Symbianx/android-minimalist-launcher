@@ -9,6 +9,8 @@ Auto-generated from all feature plans. Last updated: 2025-12-19
 - N/A (no persistent storage required for indicator) (005-battery-indicator-polish)
 - Kotlin (latest stable), Gradle, Android SDK (target API 36, min API 26) + Jetpack Compose, Material3, AndroidX (ViewModel, Activity Compose), DataStore Preferences, Kotlinx Serialization (007-settings-activity)
 - DataStore Preferences for settings persistence (following modern Android best practices) (007-settings-activity)
+- Kotlin 2.3.0, Java 17 targe + Jetpack Compose (Compose Compiler), kotlinx-serialization, AndroidX Core (006-usage-awareness)
+- SharedPreferences with JSON serialization (existing pattern from FavoritesDataSource) (006-usage-awareness)
 
 - Kotlin 1.9+ (Android SDK 36, minSdk 26, targetSdk 36) + Jetpack Compose (UI), AndroidX Lifecycle (ViewModel), Kotlin Coroutines + Flow (reactive streams), Material Design 3, LeakCanary (debug memory leak detection) (001-minimalist-launcher)
 
@@ -29,6 +31,7 @@ Kotlin 1.9+ (Android SDK 36, minSdk 26, targetSdk 36): Follow standard conventio
 
 ## Recent Changes
 - 007-settings-activity: Added Kotlin (latest stable), Gradle, Android SDK (target API 36, min API 26) + Jetpack Compose, Material3, AndroidX (ViewModel, Activity Compose), DataStore Preferences, Kotlinx Serialization
+- 006-usage-awareness: Added Kotlin 2.3.0, Java 17 targe + Jetpack Compose (Compose Compiler), kotlinx-serialization, AndroidX Core
 - 005-battery-indicator-polish: Added Kotlin (latest stable), Jetpack Compose + Jetpack Compose, AndroidX, Material, Kotlin stdlib
 - 002-auto-launch: Added Kotlin (latest stable), Gradle, Android SDK (target: current stable) + Jetpack Compose, AndroidX, standard Android libraries
 

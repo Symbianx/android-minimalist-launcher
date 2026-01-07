@@ -12,6 +12,11 @@ A distraction-free Android launcher focused on simplicity and essential interact
 
 - **Clean Home Screen**: Displays only time, date, and favorite apps
 - **Smart Battery Indicator**: Circular indicator around camera notch (Pixel 8 Pro) that appears only when battery is below 50%
+- **Usage Awareness**: Mindful phone use features without judgment or control
+  - **Unlock Counter**: See how many times you've unlocked your phone today in the top-left corner
+  - **App Launch Awareness**: Brief overlay shows "8th time today" when opening apps
+  - **Last Launch Time**: See "opened 20m ago" to notice compulsive checking patterns
+  - All data resets at midnight and stays local - no cloud sync, no tracking
 - **Gesture Navigation**: 
   - Swipe right-to-left for app search
   - Swipe left-to-right in search to return to home (with smooth animation)
@@ -25,6 +30,26 @@ A distraction-free Android launcher focused on simplicity and essential interact
 - **Distraction-Free**: No widgets, no clutter, just what you need
 
 > **Note**: This launcher is part of a personal journey to reduce phone distractions and spend less time mindlessly scrolling. By removing visual clutter and making apps deliberately accessible through search, it encourages more intentional phone usage.
+
+## Design Philosophy
+
+**"Make unconscious behavior visible, then step aside."**
+
+This launcher exists to make phone use **conscious, not controlled**. It introduces small moments of awareness before action, trusting users to decide for themselves.
+
+### Core Principles
+
+1. **Awareness, Not Guilt**  
+   Usage data is presented minimally and factually, never with judgment or shame-inducing language. The goal is to illuminate patterns, not punish behavior.
+
+2. **Consciousness Without Invasive Permissions**  
+   We work within normal launcher capabilities—no drawing over apps, no accessibility service abuse, no screen content tracking. Awareness doesn't require surveillance.
+
+3. **Autonomy Over Control**  
+   This launcher doesn't block apps, manipulate emotions, or optimize for engagement. It pauses the autopilot with gentle nudges (like showing unlock counts or app launch frequency), but never restricts or nags.
+
+4. **Clarity, Calm, and Respect**  
+   No guilt, no punishment, no dark patterns—just clear information that helps users make informed choices about their attention, if they want to.
 
 ## Development Journey
 

@@ -17,12 +17,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.symbianx.minimalistlauncher.ui.home.components.AppContextMenu
+import com.symbianx.minimalistlauncher.ui.home.components.AppLaunchOverlay
 import com.symbianx.minimalistlauncher.ui.home.components.CircularBatteryIndicator
 import com.symbianx.minimalistlauncher.ui.home.components.FavoritesList
 import com.symbianx.minimalistlauncher.ui.home.components.GestureHandler
 import com.symbianx.minimalistlauncher.ui.home.components.QuickActionButtons
 import com.symbianx.minimalistlauncher.ui.home.components.SearchView
 import com.symbianx.minimalistlauncher.ui.home.components.StatusBar
+import com.symbianx.minimalistlauncher.ui.home.components.UnlockCountDisplay
 import com.symbianx.minimalistlauncher.ui.home.components.isPixel8Pro
 import com.symbianx.minimalistlauncher.ui.settings.SettingsActivity
 
@@ -43,6 +45,9 @@ fun HomeScreen(
     val contextMenuApp by viewModel.contextMenuApp.collectAsState()
     val settings by viewModel.settings.collectAsState()
     val context = LocalContext.current
+    val unlockCount by viewModel.unlockCountToday.collectAsState()
+    val lastUnlockTimeAgo by viewModel.lastUnlockTimeAgo.collectAsState()
+    val appLaunchOverlayState by viewModel.appLaunchOverlayState.collectAsState()
 
     // Handle back button press when search is active
     BackHandler(enabled = searchState.isActive) {
@@ -77,6 +82,13 @@ fun HomeScreen(
                                     .offset(y = 8.dp),
                         )
                     }
+                    // Unlock count display at top-left
+                    UnlockCountDisplay(
+                        unlockCount = unlockCount,
+                        lastUnlockTimeAgo = lastUnlockTimeAgo,
+                        modifier = Modifier.align(Alignment.TopStart),
+                    )
+
                     // Status bar below circular indicator
                     StatusBar(
                         deviceStatus = deviceStatus,
@@ -131,6 +143,16 @@ fun HomeScreen(
                 onAddToFavorites = { viewModel.addAppToFavorites(app) },
                 onRemoveFromFavorites = { viewModel.removeAppFromFavorites(app) },
                 onOpenAppInfo = { viewModel.openAppInfo(app) },
+            )
+        }
+
+        // App launch overlay
+        appLaunchOverlayState?.let { state ->
+            AppLaunchOverlay(
+                appName = state.appName,
+                launchCount = state.launchCount,
+                lastLaunchTimeAgo = state.lastLaunchTimeAgo,
+                visible = state.visible,
             )
         }
     }
