@@ -7,6 +7,8 @@ package com.symbianx.minimalistlauncher.domain.model
  * @property leftQuickAction Configuration for bottom-left quick action button
  * @property rightQuickAction Configuration for bottom-right quick action button
  * @property batteryIndicatorMode When to show battery indicator
+ * @property clockAppPackage Package name for clock tap action (null = default system clock)
+ * @property clockAppLabel Display label for clock app (null = default system clock)
  * @property lastModified Timestamp of last settings change (for debugging)
  */
 data class LauncherSettings(
@@ -14,6 +16,8 @@ data class LauncherSettings(
     val leftQuickAction: QuickActionConfig = QuickActionConfig.defaultLeft(),
     val rightQuickAction: QuickActionConfig = QuickActionConfig.defaultRight(),
     val batteryIndicatorMode: BatteryThresholdMode = BatteryThresholdMode.BELOW_50,
+    val clockAppPackage: String? = null,
+    val clockAppLabel: String? = null,
     val lastModified: Long = System.currentTimeMillis(),
 ) {
     companion object {

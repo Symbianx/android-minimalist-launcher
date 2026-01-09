@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -22,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -90,6 +92,8 @@ fun SettingsScreen(
                     onAutoLaunchChange = viewModel::updateAutoLaunch,
                     onLeftQuickActionClick = { viewModel.showAppPickerFor(AppPickerTarget.LEFT) },
                     onRightQuickActionClick = { viewModel.showAppPickerFor(AppPickerTarget.RIGHT) },
+                    onClockAppClick = { viewModel.showAppPickerFor(AppPickerTarget.CLOCK) },
+                    onClockAppReset = viewModel::resetClockAppToDefault,
                     onBatteryModeChange = viewModel::updateBatteryMode,
                     onResetClick = viewModel::showResetDialog,
                     modifier = Modifier.padding(paddingValues),
@@ -120,6 +124,7 @@ fun SettingsScreen(
                 when (target) {
                     AppPickerTarget.LEFT -> viewModel.updateLeftQuickAction(app)
                     AppPickerTarget.RIGHT -> viewModel.updateRightQuickAction(app)
+                    AppPickerTarget.CLOCK -> viewModel.updateClockApp(app)
                 }
             },
             onDismiss = viewModel::dismissAppPicker,
@@ -144,6 +149,8 @@ private fun SettingsContent(
     onAutoLaunchChange: (Boolean) -> Unit,
     onLeftQuickActionClick: () -> Unit,
     onRightQuickActionClick: () -> Unit,
+    onClockAppClick: () -> Unit,
+    onClockAppReset: () -> Unit,
     onBatteryModeChange: (BatteryThresholdMode) -> Unit,
     onResetClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -180,6 +187,17 @@ private fun SettingsContent(
                 title = "Right quick action",
                 description = settings.rightQuickAction.label,
                 onClick = onRightQuickActionClick,
+            )
+        }
+
+        item { HorizontalDivider() }
+
+        // Clock app section
+        item {
+            ClockAppPreference(
+                clockAppLabel = settings.clockAppLabel,
+                onClick = onClockAppClick,
+                onReset = onClockAppReset,
             )
         }
 
@@ -278,6 +296,48 @@ private fun PreferenceItem(
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
+    }
+}
+
+/**
+ * Clock app preference with app name display and reset button.
+ */
+@Composable
+private fun ClockAppPreference(
+    clockAppLabel: String?,
+    onClick: () -> Unit,
+    onReset: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = onClick,
+                ).padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = "Clock app",
+                style = MaterialTheme.typography.bodyLarge,
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = clockAppLabel ?: "System default",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        if (clockAppLabel != null) {
+            Spacer(modifier = Modifier.width(8.dp))
+            TextButton(onClick = onReset) {
+                Text("Reset")
+            }
+        }
     }
 }
 

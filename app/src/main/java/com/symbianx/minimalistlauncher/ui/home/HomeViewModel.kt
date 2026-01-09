@@ -533,6 +533,41 @@ class HomeViewModel(
      */
     fun openClockApp() {
         NavigationLogger.logClockQuickAccess()
+        val clockAppPackage = settings.value.clockAppPackage
+
+        // If a custom clock app is configured, launch it directly
+        if (clockAppPackage != null) {
+            try {
+                val intent =
+                    getApplication<Application>()
+                        .packageManager
+                        .getLaunchIntentForPackage(clockAppPackage)
+
+                if (intent != null) {
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    getApplication<Application>().startActivity(intent)
+                    return
+                } else {
+                    Toast
+                        .makeText(
+                            getApplication(),
+                            "Selected clock app not available",
+                            Toast.LENGTH_SHORT,
+                        ).show()
+                    return
+                }
+            } catch (e: Exception) {
+                Toast
+                    .makeText(
+                        getApplication(),
+                        "Failed to launch clock app",
+                        Toast.LENGTH_SHORT,
+                    ).show()
+                return
+            }
+        }
+
+        // Default behavior: use system clock intent
         try {
             val intent =
                 Intent(android.provider.AlarmClock.ACTION_SHOW_ALARMS).apply {
