@@ -98,6 +98,31 @@ class SettingsViewModel(
         }
     }
 
+    fun updateClockApp(app: App) {
+        viewModelScope.launch {
+            val current = (_uiState.value as? SettingsUiState.Loaded)?.settings ?: return@launch
+            val updated =
+                current.copy(
+                    clockAppPackage = app.packageName,
+                    clockAppLabel = app.label,
+                )
+            settingsRepository.updateSettings(updated)
+            _showAppPicker.value = null
+        }
+    }
+
+    fun resetClockAppToDefault() {
+        viewModelScope.launch {
+            val current = (_uiState.value as? SettingsUiState.Loaded)?.settings ?: return@launch
+            val updated =
+                current.copy(
+                    clockAppPackage = null,
+                    clockAppLabel = null,
+                )
+            settingsRepository.updateSettings(updated)
+        }
+    }
+
     fun updateBatteryMode(mode: BatteryThresholdMode) {
         viewModelScope.launch {
             val current = (_uiState.value as? SettingsUiState.Loaded)?.settings ?: return@launch
@@ -136,4 +161,5 @@ class SettingsViewModel(
 enum class AppPickerTarget {
     LEFT,
     RIGHT,
+    CLOCK,
 }

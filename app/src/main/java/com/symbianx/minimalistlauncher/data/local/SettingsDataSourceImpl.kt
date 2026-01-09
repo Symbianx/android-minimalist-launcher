@@ -42,6 +42,8 @@ class SettingsDataSourceImpl(
         val RIGHT_QUICK_ACTION_PACKAGE = stringPreferencesKey("right_quick_action_package")
         val RIGHT_QUICK_ACTION_LABEL = stringPreferencesKey("right_quick_action_label")
         val BATTERY_THRESHOLD_MODE = stringPreferencesKey("battery_threshold_mode")
+        val CLOCK_APP_PACKAGE = stringPreferencesKey("clock_app_package")
+        val CLOCK_APP_LABEL = stringPreferencesKey("clock_app_label")
         val LAST_MODIFIED = longPreferencesKey("last_modified")
     }
 
@@ -80,6 +82,8 @@ class SettingsDataSourceImpl(
                                 BatteryThresholdMode.BELOW_50
                             }
                         } ?: BatteryThresholdMode.BELOW_50,
+                    clockAppPackage = preferences[Keys.CLOCK_APP_PACKAGE],
+                    clockAppLabel = preferences[Keys.CLOCK_APP_LABEL],
                     lastModified = preferences[Keys.LAST_MODIFIED] ?: System.currentTimeMillis(),
                 )
             }
@@ -92,6 +96,16 @@ class SettingsDataSourceImpl(
             preferences[Keys.RIGHT_QUICK_ACTION_PACKAGE] = settings.rightQuickAction.packageName
             preferences[Keys.RIGHT_QUICK_ACTION_LABEL] = settings.rightQuickAction.label
             preferences[Keys.BATTERY_THRESHOLD_MODE] = settings.batteryIndicatorMode.name
+            if (settings.clockAppPackage != null) {
+                preferences[Keys.CLOCK_APP_PACKAGE] = settings.clockAppPackage
+            } else {
+                preferences.remove(Keys.CLOCK_APP_PACKAGE)
+            }
+            if (settings.clockAppLabel != null) {
+                preferences[Keys.CLOCK_APP_LABEL] = settings.clockAppLabel
+            } else {
+                preferences.remove(Keys.CLOCK_APP_LABEL)
+            }
             preferences[Keys.LAST_MODIFIED] = System.currentTimeMillis()
         }
     }
