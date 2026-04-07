@@ -20,8 +20,9 @@ class DeviceStatusRepositoryImpl(
 ) : DeviceStatusRepository {
     private val timeFlow: Flow<String> =
         flow {
-            val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT, Locale.getDefault())
             while (true) {
+                // Create format each tick to pick up timezone changes
+                val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT, Locale.getDefault())
                 // Emit current time immediately
                 val now = Date()
                 emit(timeFormat.format(now))
@@ -35,8 +36,9 @@ class DeviceStatusRepositoryImpl(
 
     private val dateFlow: Flow<String> =
         flow {
-            val dateFormat = SimpleDateFormat("EEE, MMM dd", Locale.getDefault())
             while (true) {
+                // Create format each tick to pick up timezone changes
+                val dateFormat = SimpleDateFormat("EEE, MMM dd", Locale.getDefault())
                 // Emit current date immediately
                 val now = Date()
                 emit(dateFormat.format(now))
