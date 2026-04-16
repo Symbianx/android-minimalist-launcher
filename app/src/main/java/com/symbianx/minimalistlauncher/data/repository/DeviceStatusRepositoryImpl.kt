@@ -1,104 +1,39 @@
 package com.symbianx.minimalistlauncher.data.repository
 
 import com.symbianx.minimalistlauncher.data.system.BatteryDataSource
+import com.symbianx.minimalistlauncher.data.system.TimeDataSource
 import com.symbianx.minimalistlauncher.domain.model.DeviceStatus
 import com.symbianx.minimalistlauncher.domain.repository.DeviceStatusRepository
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flow
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
 /**
  * Implementation of [DeviceStatusRepository].
+ *
+ * Uses system time tick broadcasts (ACTION_TIME_TICK, ACTION_TIME_CHANGED,
+ * ACTION_TIMEZONE_CHANGED) to drive clock updates instead of manual delay
+ * calculations, ensuring the display always reflects the current timezone.
  */
 class DeviceStatusRepositoryImpl(
     private val batteryDataSource: BatteryDataSource,
+    private val timeDataSource: TimeDataSource,
 ) : DeviceStatusRepository {
-    private val timeFlow: Flow<String> =
-        flow {
-            while (true) {
-                // Create format each tick to pick up timezone changes
-                val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT, Locale.getDefault())
-                // Emit current time immediately
-                val now = Date()
-                emit(timeFormat.format(now))
-
-                // Calculate delay until next minute change for battery optimization
-                // Using the same timestamp for consistency
-                val delayUntilNextMinute = calculateDelayUntilNextMinute()
-                delay(delayUntilNextMinute)
-            }
-        }
-
-    private val dateFlow: Flow<String> =
-        flow {
-            while (true) {
-                // Create format each tick to pick up timezone changes
-                val dateFormat = SimpleDateFormat("EEE, MMM dd", Locale.getDefault())
-                // Emit current date immediately
-                val now = Date()
-                emit(dateFormat.format(now))
-
-                // Calculate delay until next day change for battery optimization
-                // Using the same timestamp for consistency
-                val delayUntilNextDay = calculateDelayUntilNextDay()
-                delay(delayUntilNextDay)
-            }
-        }
-
     override fun observeDeviceStatus(): Flow<DeviceStatus> =
         combine(
-            timeFlow,
-            dateFlow,
+            timeDataSource.observeTimeTicks(),
             batteryDataSource.observeBatteryStatus(),
-        ) { time, date, (batteryPercentage, isCharging) ->
+        ) { _, (batteryPercentage, isCharging) ->
+            val now = Date()
+            val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT, Locale.getDefault())
+            val dateFormat = SimpleDateFormat("EEE, MMM dd", Locale.getDefault())
             DeviceStatus(
-                currentTime = time,
-                currentDate = date,
+                currentTime = timeFormat.format(now),
+                currentDate = dateFormat.format(now),
                 batteryPercentage = batteryPercentage,
                 isCharging = isCharging,
             )
         }
-
-    /**
-     * Calculates the delay in milliseconds until the next minute change.
-     * This ensures the clock updates exactly when the minute changes for battery optimization.
-     */
-    internal fun calculateDelayUntilNextMinute(): Long {
-        val now = Calendar.getInstance()
-        val seconds = now.get(Calendar.SECOND)
-        val milliseconds = now.get(Calendar.MILLISECOND)
-
-        // Calculate remaining time in current minute
-        val remainingSeconds = 60 - seconds
-        val remainingMillis = remainingSeconds * 1000L - milliseconds
-
-        // Ensure we always have a positive delay (minimum 100ms to avoid timing edge cases)
-        return remainingMillis.coerceAtLeast(100L)
-    }
-
-    /**
-     * Calculates the delay in milliseconds until the next day change (midnight).
-     * This ensures the date updates exactly when the day changes for battery optimization.
-     */
-    internal fun calculateDelayUntilNextDay(): Long {
-        val now = Calendar.getInstance()
-        val tomorrow =
-            Calendar.getInstance().apply {
-                add(Calendar.DAY_OF_YEAR, 1)
-                set(Calendar.HOUR_OF_DAY, 0)
-                set(Calendar.MINUTE, 0)
-                set(Calendar.SECOND, 0)
-                set(Calendar.MILLISECOND, 0)
-            }
-
-        val delayMillis = tomorrow.timeInMillis - now.timeInMillis
-
-        // Ensure we always have a positive delay (minimum 1000ms to avoid timing edge cases)
-        return delayMillis.coerceAtLeast(1000L)
-    }
 }

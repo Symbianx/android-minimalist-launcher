@@ -14,6 +14,7 @@ import com.symbianx.minimalistlauncher.data.repository.FavoritesRepositoryImpl
 import com.symbianx.minimalistlauncher.data.repository.SettingsRepositoryImpl
 import com.symbianx.minimalistlauncher.data.system.AppListDataSourceImpl
 import com.symbianx.minimalistlauncher.data.system.BatteryDataSourceImpl
+import com.symbianx.minimalistlauncher.data.system.TimeDataSourceImpl
 import com.symbianx.minimalistlauncher.domain.model.App
 import com.symbianx.minimalistlauncher.domain.model.DeviceStatus
 import com.symbianx.minimalistlauncher.domain.model.FavoriteApp
@@ -47,6 +48,7 @@ class HomeViewModel(
     private val deviceStatusRepository =
         DeviceStatusRepositoryImpl(
             BatteryDataSourceImpl(application.applicationContext),
+            TimeDataSourceImpl(application.applicationContext),
         )
 
     private val favoritesRepository =
