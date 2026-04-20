@@ -123,7 +123,7 @@ dependencies {
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
     testImplementation("org.robolectric:robolectric:4.16.1")
     testImplementation("org.mockito.kotlin:mockito-kotlin:6.3.0")
-    testImplementation("org.mockito:mockito-core:5.21.0")
+    testImplementation("org.mockito:mockito-core:5.23.0")
 
     // Android Testing
     androidTestImplementation(composeBom)
