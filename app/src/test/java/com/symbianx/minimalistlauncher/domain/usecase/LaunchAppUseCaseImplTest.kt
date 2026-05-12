@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import com.symbianx.minimalistlauncher.domain.model.App
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -50,8 +51,13 @@ class LaunchAppUseCaseImplTest {
 
         val result = useCase.execute(app)
         assertTrue("Launch should succeed when PackageManager can resolve the intent", result)
-        // Verify startActivity was called (with the fresh intent, not the stale one)
-        verify(context).startActivity(any())
+        // Verify startActivity was called with the fresh intent (not the stale cached one)
+        val captor = org.mockito.kotlin.argumentCaptor<Intent>()
+        verify(context).startActivity(captor.capture())
+        assertEquals(
+            "com.example.app.NewActivity",
+            captor.firstValue.component?.className,
+        )
     }
 
     @Test
@@ -90,7 +96,13 @@ class LaunchAppUseCaseImplTest {
 
         val result = useCase.execute(app)
         assertTrue("Launch should succeed using the fresh intent from PackageManager", result)
-        verify(context).startActivity(any())
+        // Verify startActivity was called with the updated intent (not the stale cached one)
+        val captor = org.mockito.kotlin.argumentCaptor<Intent>()
+        verify(context).startActivity(captor.capture())
+        assertEquals(
+            "com.duolingo.SeasonalActivity",
+            captor.firstValue.component?.className,
+        )
     }
 
     @Test
