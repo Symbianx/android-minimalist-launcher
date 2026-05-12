@@ -19,15 +19,15 @@ class LaunchAppUseCaseImpl(
         try {
             // Re-resolve the launch intent fresh from PackageManager to handle apps
             // that change their launcher activity component at runtime.
-            val freshIntent =
-                context.packageManager.getLaunchIntentForPackage(app.packageName)
-                    ?: app.launchIntent
+            val resolvedIntent = context.packageManager.getLaunchIntentForPackage(app.packageName)
 
-            context.startActivity(
-                freshIntent.apply {
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                },
-            )
+            if (resolvedIntent == null) {
+                Log.w("LaunchAppUseCase", "No launch intent found for ${app.packageName}, app may have been uninstalled")
+                return false
+            }
+
+            resolvedIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(resolvedIntent)
             true
         } catch (e: Exception) {
             Log.e("LaunchAppUseCase", "Failed to launch ${app.packageName}: ${e.message}")
