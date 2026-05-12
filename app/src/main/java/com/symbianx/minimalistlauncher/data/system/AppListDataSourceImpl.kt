@@ -97,6 +97,8 @@ class AppListDataSourceImpl(
                 IntentFilter().apply {
                     addAction(Intent.ACTION_PACKAGE_ADDED)
                     addAction(Intent.ACTION_PACKAGE_REMOVED)
+                    addAction(Intent.ACTION_PACKAGE_CHANGED)
+                    addAction(Intent.ACTION_PACKAGE_REPLACED)
                     addDataScheme("package")
                 }
 
