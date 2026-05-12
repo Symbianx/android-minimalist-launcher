@@ -33,21 +33,24 @@ class LaunchAppUseCaseImplTest {
     @Test
     fun `execute re-resolves launch intent from PackageManager`() {
         // PackageManager returns a fresh intent for this package
-        val freshIntent = Intent(Intent.ACTION_MAIN).apply {
-            setClassName("com.example.app", "com.example.app.NewActivity")
-        }
+        val freshIntent =
+            Intent(Intent.ACTION_MAIN).apply {
+                setClassName("com.example.app", "com.example.app.NewActivity")
+            }
         whenever(packageManager.getLaunchIntentForPackage("com.example.app"))
             .thenReturn(freshIntent)
 
         // Create app with a stale/different cached intent
-        val staleIntent = Intent(Intent.ACTION_MAIN).apply {
-            setClassName("com.example.app", "com.example.app.OldActivity")
-        }
-        val app = App(
-            packageName = "com.example.app",
-            label = "Example",
-            launchIntent = staleIntent,
-        )
+        val staleIntent =
+            Intent(Intent.ACTION_MAIN).apply {
+                setClassName("com.example.app", "com.example.app.OldActivity")
+            }
+        val app =
+            App(
+                packageName = "com.example.app",
+                label = "Example",
+                launchIntent = staleIntent,
+            )
 
         val result = useCase.execute(app)
         assertTrue("Launch should succeed when PackageManager can resolve the intent", result)
@@ -66,11 +69,12 @@ class LaunchAppUseCaseImplTest {
         whenever(packageManager.getLaunchIntentForPackage("com.uninstalled.app"))
             .thenReturn(null)
 
-        val app = App(
-            packageName = "com.uninstalled.app",
-            label = "Uninstalled",
-            launchIntent = Intent(),
-        )
+        val app =
+            App(
+                packageName = "com.uninstalled.app",
+                label = "Uninstalled",
+                launchIntent = Intent(),
+            )
 
         val result = useCase.execute(app)
         assertFalse("Launch should fail when no launch intent can be resolved", result)
@@ -79,20 +83,23 @@ class LaunchAppUseCaseImplTest {
     @Test
     fun `execute uses fresh intent even when cached intent differs - Duolingo scenario`() {
         // This simulates the Duolingo scenario where the app changes its launcher activity
-        val updatedIntent = Intent(Intent.ACTION_MAIN).apply {
-            setClassName("com.duolingo", "com.duolingo.SeasonalActivity")
-        }
+        val updatedIntent =
+            Intent(Intent.ACTION_MAIN).apply {
+                setClassName("com.duolingo", "com.duolingo.SeasonalActivity")
+            }
         whenever(packageManager.getLaunchIntentForPackage("com.duolingo"))
             .thenReturn(updatedIntent)
 
-        val originalIntent = Intent(Intent.ACTION_MAIN).apply {
-            setClassName("com.duolingo", "com.duolingo.OriginalActivity")
-        }
-        val app = App(
-            packageName = "com.duolingo",
-            label = "Duolingo",
-            launchIntent = originalIntent, // stale cached intent
-        )
+        val originalIntent =
+            Intent(Intent.ACTION_MAIN).apply {
+                setClassName("com.duolingo", "com.duolingo.OriginalActivity")
+            }
+        val app =
+            App(
+                packageName = "com.duolingo",
+                label = "Duolingo",
+                launchIntent = originalIntent, // stale cached intent
+            )
 
         val result = useCase.execute(app)
         assertTrue("Launch should succeed using the fresh intent from PackageManager", result)
@@ -113,11 +120,12 @@ class LaunchAppUseCaseImplTest {
         whenever(context.startActivity(any()))
             .thenThrow(RuntimeException("Activity not found"))
 
-        val app = App(
-            packageName = "com.crashing.app",
-            label = "Crashing",
-            launchIntent = Intent(),
-        )
+        val app =
+            App(
+                packageName = "com.crashing.app",
+                label = "Crashing",
+                launchIntent = Intent(),
+            )
 
         val result = useCase.execute(app)
         assertFalse("Launch should return false when startActivity throws", result)

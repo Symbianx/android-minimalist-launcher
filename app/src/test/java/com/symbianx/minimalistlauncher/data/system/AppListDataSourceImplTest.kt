@@ -31,17 +31,19 @@ class AppListDataSourceImplTest {
 
         val registeredReceivers = shadowApp.registeredReceivers
 
-        val matchingFilters = registeredReceivers.mapNotNull { wrapper ->
-            try {
-                wrapper.intentFilter
-            } catch (e: Exception) {
-                null
+        val matchingFilters =
+            registeredReceivers.mapNotNull { wrapper ->
+                try {
+                    wrapper.intentFilter
+                } catch (e: Exception) {
+                    null
+                }
             }
-        }
 
-        fun hasAction(action: String) = matchingFilters.any { filter ->
-            (0 until filter.countActions()).any { i -> filter.getAction(i) == action }
-        }
+        fun hasAction(action: String) =
+            matchingFilters.any { filter ->
+                (0 until filter.countActions()).any { i -> filter.getAction(i) == action }
+            }
 
         assertTrue(
             "Receiver should listen for ACTION_PACKAGE_CHANGED",
